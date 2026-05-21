@@ -1,0 +1,2797 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!--
+=====================================================================
+  GEOTRACKER · AI VISIBILITY AUDIT TOOL
+  © 2026 Naomi · All Rights Reserved · Iozera Internal Submission
+  This source is provided for evaluation only.
+  Unauthorized reproduction, distribution, modification, public
+  display, or derivative works are strictly prohibited.
+  Originator: Naomi · Build ID: GT-2026-NM-001
+=====================================================================
+-->
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="author" content="Naomi" />
+<meta name="copyright" content="© 2026 Naomi · All Rights Reserved" />
+<meta name="originator" content="GeoTracker · Build GT-2026-NM-001 · Naomi" />
+<meta name="robots" content="noindex, nofollow, noarchive, nosnippet, noimageindex" />
+<title>GeoTracker — AI Visibility Audit</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=Manrope:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0e0d0b;
+    --bg-elevated: #16140f;
+    --surface: #1c1a14;
+    --surface-2: #25221a;
+    --border: #2d2a22;
+    --border-bright: #45402f;
+    --text: #f4ede0;
+    --text-dim: #9c9381;
+    --text-faint: #5a5446;
+    --green: #4ade80;
+    --green-bg: rgba(74, 222, 128, 0.08);
+    --green-border: rgba(74, 222, 128, 0.25);
+    --yellow: #fbbf24;
+    --yellow-bg: rgba(251, 191, 36, 0.08);
+    --yellow-border: rgba(251, 191, 36, 0.25);
+    --red: #f87171;
+    --red-bg: rgba(248, 113, 113, 0.08);
+    --red-border: rgba(248, 113, 113, 0.25);
+    --accent: #4fe8ff;
+    --on-accent: #0e0d0b;
+    --header-bg: rgba(14, 13, 11, 0.85);
+    --score-glow: rgba(248, 113, 113, 0.08);
+    --noise-opacity: 0.03;
+    --noise-blend: overlay;
+    --pulse-shadow-1: rgba(74, 222, 128, 0.4);
+    --pulse-shadow-2: rgba(74, 222, 128, 0);
+    --btn-shadow: rgba(79, 232, 255, 0.35);
+    --cta-glow: rgba(79, 232, 255, 0.10);
+    --querying-bg: rgba(79, 232, 255, 0.05);
+    --querying-scan: rgba(79, 232, 255, 0.10);
+    --recommended-bg: rgba(79, 232, 255, 0.05);
+    --ambient-1: rgba(79, 232, 255, 0.05);
+    --ambient-2: rgba(74, 222, 128, 0.03);
+    --select-arrow: "%239c9381";
+  }
+  [data-theme="light"] {
+    --bg: #ffffff;
+    --bg-elevated: #ffffff;
+    --surface: #ffffff;
+    --surface-2: #fafafa;
+    --border: #e8e4dc;
+    --border-bright: #c8c0b0;
+    --text: #1a1612;
+    --text-dim: #5e5749;
+    --text-faint: #9c9381;
+    --green: #15803d;
+    --green-bg: rgba(21, 128, 61, 0.06);
+    --green-border: rgba(21, 128, 61, 0.22);
+    --yellow: #b45309;
+    --yellow-bg: rgba(180, 83, 9, 0.06);
+    --yellow-border: rgba(180, 83, 9, 0.22);
+    --red: #a4161a;
+    --red-bg: rgba(164, 22, 26, 0.06);
+    --red-border: rgba(164, 22, 26, 0.25);
+    --accent: #a4161a;
+    --on-accent: #ffffff;
+    --header-bg: rgba(255, 255, 255, 0.88);
+    --score-glow: rgba(164, 22, 26, 0.08);
+    --noise-opacity: 0.02;
+    --noise-blend: multiply;
+    --pulse-shadow-1: rgba(21, 128, 61, 0.35);
+    --pulse-shadow-2: rgba(21, 128, 61, 0);
+    --btn-shadow: rgba(164, 22, 26, 0.28);
+    --cta-glow: rgba(164, 22, 26, 0.07);
+    --querying-bg: rgba(164, 22, 26, 0.05);
+    --querying-scan: rgba(164, 22, 26, 0.10);
+    --recommended-bg: rgba(164, 22, 26, 0.05);
+    --ambient-1: rgba(164, 22, 26, 0.05);
+    --ambient-2: rgba(164, 22, 26, 0.02);
+    --select-arrow: "%235e5749";
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Manrope', sans-serif;
+    font-weight: 400;
+    line-height: 1.5;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background:
+      radial-gradient(ellipse at top right, var(--ambient-1, rgba(79, 232, 255, 0.05)), transparent 50%),
+      radial-gradient(ellipse at bottom left, var(--ambient-2, rgba(74, 222, 128, 0.03)), transparent 50%);
+    pointer-events: none;
+    z-index: 0;
+  }
+  body::after {
+    content: '';
+    position: fixed; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.4'/%3E%3C/svg%3E");
+    opacity: var(--noise-opacity);
+    pointer-events: none;
+    z-index: 1;
+    mix-blend-mode: var(--noise-blend);
+  }
+  .wrap { position: relative; z-index: 2; max-width: 1280px; margin: 0 auto; padding: 0 32px; }
+
+  /* HEADER */
+  header {
+    border-bottom: 1px solid var(--border);
+    padding: 24px 0;
+    position: sticky; top: 0;
+    background: var(--header-bg);
+    backdrop-filter: blur(20px);
+    z-index: 10;
+  }
+  .header-inner { display: flex; align-items: center; justify-content: space-between; }
+  .logo {
+    font-family: 'Fraunces', serif;
+    font-weight: 500;
+    font-size: 24px;
+    letter-spacing: -0.02em;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .logo-mark {
+    width: 28px; height: 28px;
+    border: 1.5px solid var(--accent);
+    border-radius: 50%;
+    position: relative;
+    display: inline-block;
+  }
+  .logo-mark::before, .logo-mark::after {
+    content: ''; position: absolute;
+    background: var(--accent);
+  }
+  .logo-mark::before {
+    top: 50%; left: -3px; right: -3px; height: 1px;
+  }
+  .logo-mark::after {
+    left: 50%; top: -3px; bottom: -3px; width: 1px;
+  }
+  .logo em {
+    font-style: italic;
+    font-weight: 300;
+    color: var(--accent);
+  }
+  .header-meta {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--text-faint);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    display: flex; gap: 16px;
+    align-items: center;
+  }
+  .nav-links {
+    display: flex; align-items: center; gap: 28px;
+  }
+  .nav-link {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .nav-link:hover { color: var(--accent); }
+  .nav-signin {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .nav-signin:hover { color: var(--accent); }
+  .nav-cta {
+    background: var(--accent);
+    color: var(--on-accent);
+    border: none;
+    padding: 9px 16px;
+    font-family: 'Manrope', sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    cursor: pointer;
+    border-radius: 3px;
+    transition: transform 0.15s, box-shadow 0.15s;
+  }
+  .nav-cta:hover { transform: translateY(-1px); box-shadow: 0 6px 18px var(--btn-shadow); }
+  .theme-toggle {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+    width: 34px; height: 34px;
+    border-radius: 3px;
+    display: inline-flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    padding: 0;
+  }
+  .theme-toggle:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+  .theme-icon {
+    width: 16px; height: 16px;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  /* Show sun in dark mode (click to go light), moon in light mode (click to go dark) */
+  .theme-icon-moon { display: none; }
+  .theme-icon-sun { display: block; }
+  [data-theme="light"] .theme-icon-sun { display: none; }
+  [data-theme="light"] .theme-icon-moon { display: block; }
+  .pulse { width: 6px; height: 6px; border-radius: 50%; background: var(--green); display: inline-block; margin-right: 8px; animation: pulse 2s infinite; vertical-align: middle; }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; box-shadow: 0 0 0 0 var(--pulse-shadow-1); }
+    50% { opacity: 0.6; box-shadow: 0 0 0 6px var(--pulse-shadow-2); }
+  }
+
+  /* SCREEN MANAGEMENT */
+  .screen { display: none; animation: fadeIn 0.5s ease; }
+  .screen.active { display: block; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* HERO */
+  .hero { padding: 80px 0 60px; }
+  .hero-eyebrow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 24px;
+  }
+  .hero h1 {
+    font-family: 'Fraunces', serif;
+    font-weight: 600;
+    font-size: clamp(48px, 7vw, 88px);
+    line-height: 0.95;
+    letter-spacing: -0.03em;
+    margin-bottom: 24px;
+    max-width: 900px;
+  }
+  .hero h1 em {
+    font-style: italic;
+    font-weight: 700;
+    color: var(--accent);
+  }
+  .hero-sub {
+    font-size: 19px;
+    color: var(--text);
+    max-width: 620px;
+    line-height: 1.6;
+    margin-bottom: 56px;
+    font-weight: 500;
+  }
+
+  /* ===== CONTENT SECTIONS (How It Works, Pricing, Sample Report) ===== */
+  .content-section {
+    padding: 100px 0;
+    border-top: 1px solid var(--border);
+    scroll-margin-top: 80px;
+  }
+  .section-heading {
+    text-align: center;
+    max-width: 720px;
+    margin: 0 auto 60px;
+  }
+  .section-eyebrow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 20px;
+  }
+  .section-heading h2 {
+    font-family: 'Fraunces', serif;
+    font-weight: 300;
+    font-size: clamp(36px, 5vw, 56px);
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    margin-bottom: 20px;
+  }
+  .section-heading h2 em {
+    font-style: italic;
+    font-weight: 400;
+    color: var(--accent);
+  }
+  .section-lede {
+    font-size: 17px;
+    color: var(--text-dim);
+    line-height: 1.6;
+  }
+
+  /* How It Works */
+  .steps-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+  }
+  .step-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 32px 28px;
+    transition: border-color 0.2s, transform 0.2s;
+  }
+  .step-card:hover {
+    border-color: var(--accent);
+    transform: translateY(-2px);
+  }
+  .step-num {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-weight: 300;
+    font-size: 56px;
+    line-height: 1;
+    color: var(--accent);
+    margin-bottom: 16px;
+  }
+  .step-card h3 {
+    font-family: 'Fraunces', serif;
+    font-weight: 500;
+    font-size: 19px;
+    margin-bottom: 12px;
+    color: var(--text);
+  }
+  .step-card p {
+    font-size: 14px;
+    color: var(--text-dim);
+    line-height: 1.6;
+  }
+
+  /* Pricing */
+  .pricing-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+  .price-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 36px 32px;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+  }
+  .price-card.featured {
+    border-color: var(--accent);
+    background: linear-gradient(180deg, var(--surface) 0%, var(--surface-2) 100%);
+    box-shadow:
+      0 0 40px var(--btn-shadow),
+      0 8px 32px rgba(0, 0, 0, 0.2);
+  }
+  .price-badge {
+    position: absolute;
+    top: -12px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--accent);
+    color: var(--on-accent);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    padding: 6px 14px;
+    border-radius: 2px;
+  }
+  .price-tier {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-bottom: 16px;
+  }
+  .price-amount {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+  .price-num {
+    font-family: 'Fraunces', serif;
+    font-weight: 300;
+    font-size: 56px;
+    line-height: 1;
+    color: var(--text);
+  }
+  .price-period {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--text-dim);
+  }
+  .price-tagline {
+    font-size: 14px;
+    color: var(--text-dim);
+    line-height: 1.55;
+    margin-bottom: 24px;
+    min-height: 44px;
+  }
+  .price-features {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 28px;
+    border-top: 1px solid var(--border);
+    padding-top: 20px;
+    flex: 1;
+  }
+  .price-features li {
+    font-size: 14px;
+    color: var(--text);
+    padding: 8px 0;
+    padding-left: 22px;
+    position: relative;
+    line-height: 1.5;
+  }
+  .price-features li::before {
+    content: '✓';
+    position: absolute;
+    left: 0;
+    top: 8px;
+    color: var(--accent);
+    font-weight: 600;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .price-cta, .price-cta-outline {
+    padding: 14px 20px;
+    font-family: 'Manrope', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    cursor: pointer;
+    border-radius: 3px;
+    transition: transform 0.15s, box-shadow 0.15s, border-color 0.2s;
+  }
+  .price-cta {
+    background: var(--accent);
+    color: var(--on-accent);
+    border: none;
+  }
+  .price-cta:hover { transform: translateY(-1px); box-shadow: 0 8px 20px var(--btn-shadow); }
+  .price-cta-outline {
+    background: transparent;
+    border: 1px solid var(--border-bright);
+    color: var(--text);
+  }
+  .price-cta-outline:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  /* Sample Report */
+  .sample-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 36px;
+    max-width: 920px;
+    margin: 0 auto;
+    position: relative;
+  }
+  .sample-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 24px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 24px;
+  }
+  .sample-meta {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    color: var(--text-dim);
+    margin-bottom: 8px;
+  }
+  .sample-title {
+    font-family: 'Fraunces', serif;
+    font-weight: 500;
+    font-size: 22px;
+    color: var(--text);
+  }
+  .sample-score { text-align: right; }
+  .sample-score-num {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-weight: 300;
+    font-size: 68px;
+    line-height: 1;
+    color: var(--red);
+  }
+  .sample-score-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-top: 4px;
+  }
+  .sample-matrix {
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 24px;
+  }
+  .sample-row {
+    display: grid;
+    grid-template-columns: 2fr repeat(5, 1fr);
+    border-bottom: 1px solid var(--border);
+  }
+  .sample-row:last-child { border-bottom: none; }
+  .sample-row-head {
+    background: var(--surface-2);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+  }
+  .sample-row-head > div {
+    padding: 12px 14px;
+    text-align: center;
+    border-right: 1px solid var(--border);
+  }
+  .sample-row-head > div:first-child { text-align: left; }
+  .sample-row-head > div:last-child { border-right: none; }
+  .sample-prompt {
+    padding: 14px 14px;
+    font-family: 'Manrope', sans-serif;
+    font-size: 13px;
+    font-style: italic;
+    color: var(--text);
+    border-right: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+  }
+  .sample-cell {
+    padding: 14px;
+    text-align: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 600;
+    font-size: 14px;
+    border-right: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .sample-cell:last-child { border-right: none; }
+  .sample-cell.green { color: var(--green); background: rgba(74, 222, 128, 0.06); }
+  .sample-cell.yellow { color: var(--yellow); background: rgba(251, 191, 36, 0.06); }
+  .sample-cell.red { color: var(--red); background: rgba(248, 113, 113, 0.06); }
+
+  .sample-verdict {
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--red);
+    border-radius: 0 4px 4px 0;
+    padding: 18px 22px;
+    margin-bottom: 28px;
+  }
+  .sample-verdict-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--red);
+    margin-top: 6px;
+    flex-shrink: 0;
+  }
+  .sample-verdict > div:last-child {
+    font-size: 14px;
+    color: var(--text);
+    line-height: 1.6;
+  }
+  .sample-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    background: var(--accent);
+    color: var(--on-accent);
+    border: none;
+    padding: 14px 24px;
+    font-family: 'Manrope', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    cursor: pointer;
+    border-radius: 3px;
+    transition: transform 0.15s, box-shadow 0.15s;
+  }
+  .sample-cta:hover { transform: translateY(-1px); box-shadow: 0 8px 20px var(--btn-shadow); }
+
+  /* FORM */
+  .audit-form {
+    /* Glass effect: semi-transparent dark interior */
+    background: rgba(22, 20, 15, 0.55);
+    border-radius: 6px;
+    padding: 48px;
+    max-width: 760px;
+    margin: 0 auto;
+    text-align: left;
+    position: relative;
+    backdrop-filter: blur(20px) saturate(160%);
+    -webkit-backdrop-filter: blur(20px) saturate(160%);
+    box-shadow:
+      0 0 60px rgba(0, 255, 255, 0.12),
+      0 0 24px rgba(0, 212, 255, 0.08),
+      0 8px 32px rgba(0, 0, 0, 0.35),
+      inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  }
+  /* Neon cyan gradient border — applied ONLY to the edge via pseudo-element */
+  .audit-form::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 6px;
+    padding: 1.5px;
+    background: linear-gradient(135deg, #00ffff 0%, #4fe8ff 25%, #00d4ff 50%, #5cffff 75%, #00ffff 100%);
+    -webkit-mask:
+      linear-gradient(#fff 0 0) content-box,
+      linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+            mask-composite: exclude;
+    pointer-events: none;
+  }
+  /* Light mode: white form with bloody red gradient border + red glow */
+  [data-theme="light"] .audit-form {
+    background: var(--surface);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    box-shadow:
+      0 0 60px rgba(164, 22, 26, 0.15),
+      0 0 24px rgba(220, 38, 38, 0.10),
+      0 8px 32px rgba(0, 0, 0, 0.06),
+      inset 0 1px 0 rgba(255, 255, 255, 0.4);
+  }
+  [data-theme="light"] .audit-form::before {
+    background: linear-gradient(135deg, #590d0d 0%, #8b0000 25%, #a4161a 50%, #dc2626 75%, #590d0d 100%);
+  }
+  .form-label-row {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 32px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--border);
+  }
+  .form-title {
+    font-family: 'Fraunces', serif;
+    font-size: 22px;
+    font-weight: 400;
+  }
+  .form-id {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--text-faint);
+    letter-spacing: 0.1em;
+  }
+  .field { margin-bottom: 24px; }
+  .field label {
+    display: block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--text-dim);
+    margin-bottom: 8px;
+  }
+  .field input, .field select {
+    width: 100%;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 14px 16px;
+    font-family: 'Manrope', sans-serif;
+    font-size: 15px;
+    border-radius: 3px;
+    transition: border-color 0.2s, background 0.2s;
+  }
+  .field input:focus, .field select:focus {
+    outline: none;
+    border-color: var(--accent);
+    background: var(--surface-2);
+  }
+  .field select { appearance: none; cursor: pointer; background-image: url("data:image/svg+xml,%3Csvg width='12' height='8' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%239c9381' stroke-width='1.5' fill='none'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 16px center; padding-right: 40px; }
+  [data-theme="light"] .field select { background-image: url("data:image/svg+xml,%3Csvg width='12' height='8' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%235e5749' stroke-width='1.5' fill='none'/%3E%3C/svg%3E"); }
+  .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+  .btn {
+    display: inline-flex; align-items: center; gap: 12px;
+    background: var(--accent);
+    color: var(--on-accent);
+    border: none;
+    padding: 16px 28px;
+    font-family: 'Manrope', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    cursor: pointer;
+    border-radius: 3px;
+    transition: transform 0.15s, box-shadow 0.15s;
+  }
+  .btn:hover { transform: translateY(-1px); box-shadow: 0 8px 24px var(--btn-shadow); }
+  .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; }
+  .btn-arrow { font-family: 'JetBrains Mono', monospace; }
+
+  .trust-row {
+    margin-top: 32px;
+    padding-top: 24px;
+    border-top: 1px solid var(--border);
+    display: flex; gap: 32px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--text-faint);
+    letter-spacing: 0.05em;
+  }
+
+  /* AUDIT PROGRESS */
+  .progress-screen { padding: 60px 0; }
+  .progress-header {
+    margin-bottom: 48px;
+  }
+  .progress-header h2 {
+    font-family: 'Fraunces', serif;
+    font-weight: 300;
+    font-size: 42px;
+    line-height: 1.1;
+    margin-bottom: 12px;
+  }
+  .progress-header h2 em { font-style: italic; color: var(--accent); }
+  .progress-status {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    color: var(--text-dim);
+  }
+  .progress-grid {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  .progress-row {
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    border-bottom: 1px solid var(--border);
+  }
+  .progress-row:last-child { border-bottom: none; }
+  .progress-llm {
+    padding: 20px 24px;
+    border-right: 1px solid var(--border);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    color: var(--text);
+    display: flex; align-items: center; gap: 10px;
+  }
+  .progress-cells {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+  }
+  .progress-cell {
+    padding: 20px;
+    border-right: 1px solid var(--border);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--text-faint);
+    display: flex; align-items: center; justify-content: center;
+    min-height: 64px;
+    transition: all 0.4s ease;
+    position: relative;
+  }
+  .progress-cell:last-child { border-right: none; }
+  .progress-cell.pending { color: var(--text-faint); }
+  .progress-cell.querying {
+    color: var(--accent);
+    background: var(--querying-bg);
+  }
+  .progress-cell.querying::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(90deg, transparent, var(--querying-scan), transparent);
+    animation: scan 1.2s linear infinite;
+  }
+  @keyframes scan { 0% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }
+  .progress-cell.done.green { color: var(--green); }
+  .progress-cell.done.yellow { color: var(--yellow); }
+  .progress-cell.done.red { color: var(--red); }
+
+  .progress-bar-wrap {
+    margin-top: 32px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 20px 24px;
+    display: flex; align-items: center; gap: 20px;
+  }
+  .progress-bar {
+    flex: 1;
+    height: 4px;
+    background: var(--bg-elevated);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .progress-bar-fill {
+    height: 100%;
+    background: var(--accent);
+    width: 0%;
+    transition: width 0.4s ease;
+  }
+  .progress-count {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    color: var(--text-dim);
+    min-width: 70px;
+    text-align: right;
+  }
+
+  /* RESULTS */
+  .results-screen { padding: 48px 0 80px; }
+  .results-header {
+    display: flex; justify-content: space-between; align-items: flex-end;
+    margin-bottom: 48px;
+    flex-wrap: wrap; gap: 24px;
+  }
+  .results-title-block h2 {
+    font-family: 'Fraunces', serif;
+    font-weight: 300;
+    font-size: 48px;
+    line-height: 1.1;
+    margin-bottom: 8px;
+  }
+  .results-title-block h2 em { font-style: italic; color: var(--accent); }
+  .results-meta {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--text-dim);
+    letter-spacing: 0.05em;
+  }
+  .results-meta span { margin-right: 16px; }
+  .results-meta .sep { color: var(--text-faint); }
+
+  /* Score panel */
+  .top-grid {
+    display: grid;
+    grid-template-columns: 380px 1fr;
+    gap: 24px;
+    margin-bottom: 32px;
+  }
+  .score-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 32px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .score-card::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(circle at center, var(--score-glow), transparent 70%);
+    pointer-events: none;
+  }
+  .score-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: var(--text-dim);
+    margin-bottom: 20px;
+  }
+  .score-display {
+    position: relative;
+    width: 240px;
+    height: 240px;
+    margin: 0 auto 24px;
+  }
+  .score-display svg {
+    width: 100%; height: 100%;
+    transform: rotate(-90deg);
+  }
+  .score-track { stroke: var(--bg-elevated); }
+  .score-fill {
+    stroke: var(--red);
+    stroke-linecap: round;
+    transition: stroke-dashoffset 1.5s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .score-value {
+    position: absolute; inset: 0;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+  }
+  .score-number {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-weight: 300;
+    font-size: 96px;
+    line-height: 1;
+    color: var(--red);
+  }
+  .score-suffix {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    margin-top: 4px;
+  }
+  .score-verdict {
+    font-family: 'Manrope', sans-serif;
+    font-size: 14px;
+    color: var(--text);
+    line-height: 1.5;
+    padding-top: 20px;
+    border-top: 1px solid var(--border);
+  }
+  .score-verdict strong { color: var(--red); }
+
+  /* Summary stats */
+  .summary-stats {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 32px;
+    display: grid;
+    grid-template-rows: auto 1fr;
+    gap: 24px;
+  }
+  .summary-header h3 {
+    font-family: 'Fraunces', serif;
+    font-weight: 400;
+    font-size: 20px;
+    margin-bottom: 4px;
+  }
+  .summary-header p {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--text-faint);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+  .stat-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: var(--border);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+  .stat {
+    background: var(--bg-elevated);
+    padding: 20px;
+  }
+  .stat-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; margin-right: 8px; vertical-align: middle; }
+  .stat-dot.green { background: var(--green); }
+  .stat-dot.yellow { background: var(--yellow); }
+  .stat-dot.red { background: var(--red); }
+  .stat-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-dim);
+    margin-bottom: 12px;
+  }
+  .stat-value {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-weight: 300;
+    font-size: 40px;
+    line-height: 1;
+  }
+  .stat-value.green { color: var(--green); }
+  .stat-value.yellow { color: var(--yellow); }
+  .stat-value.red { color: var(--red); }
+  .stat-sub {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--text-faint);
+    margin-top: 6px;
+  }
+
+  /* GRID */
+  .grid-section {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 32px;
+  }
+  .section-header {
+    padding: 24px 32px;
+    border-bottom: 1px solid var(--border);
+    display: flex; justify-content: space-between; align-items: center;
+    flex-wrap: wrap; gap: 12px;
+  }
+  .section-header h3 {
+    font-family: 'Fraunces', serif;
+    font-weight: 400;
+    font-size: 22px;
+  }
+  .section-legend {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--text-dim);
+    display: flex; gap: 20px;
+    letter-spacing: 0.05em;
+  }
+  .legend-item { display: flex; align-items: center; gap: 6px; }
+  .legend-dot { width: 8px; height: 8px; border-radius: 50%; }
+
+  .matrix-wrap { overflow-x: auto; }
+  .matrix {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 800px;
+  }
+  .matrix th {
+    background: var(--bg-elevated);
+    padding: 16px 12px;
+    text-align: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--text-dim);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    border-bottom: 1px solid var(--border);
+    border-right: 1px solid var(--border);
+  }
+  .matrix th:first-child {
+    text-align: left;
+    padding-left: 24px;
+    min-width: 280px;
+  }
+  .matrix th:last-child { border-right: none; }
+  .matrix td {
+    padding: 0;
+    border-bottom: 1px solid var(--border);
+    border-right: 1px solid var(--border);
+    vertical-align: middle;
+  }
+  .matrix tr:last-child td { border-bottom: none; }
+  .matrix td:last-child { border-right: none; }
+  .prompt-cell {
+    padding: 18px 24px;
+    font-family: 'Manrope', sans-serif;
+    font-size: 14px;
+    color: var(--text);
+    background: var(--bg-elevated);
+  }
+  .prompt-cell .prompt-text { display: block; margin-bottom: 4px; }
+  .prompt-cell .prompt-meta {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--text-faint);
+    letter-spacing: 0.05em;
+  }
+  .verdict-cell {
+    height: 70px;
+    cursor: pointer;
+    transition: background 0.2s;
+    position: relative;
+  }
+  .verdict-cell:hover { background: var(--surface-2); }
+  .verdict-inner {
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    height: 100%; gap: 4px;
+  }
+  .verdict-cell.green .verdict-inner { background: var(--green-bg); border-top: 1px solid var(--green-border); border-bottom: 1px solid var(--green-border); }
+  .verdict-cell.yellow .verdict-inner { background: var(--yellow-bg); border-top: 1px solid var(--yellow-border); border-bottom: 1px solid var(--yellow-border); }
+  .verdict-cell.red .verdict-inner { background: var(--red-bg); border-top: 1px solid var(--red-border); border-bottom: 1px solid var(--red-border); }
+  .verdict-icon {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 600;
+    font-size: 14px;
+  }
+  .verdict-cell.green .verdict-icon { color: var(--green); }
+  .verdict-cell.yellow .verdict-icon { color: var(--yellow); }
+  .verdict-cell.red .verdict-icon { color: var(--red); }
+  .verdict-rank {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--text-faint);
+  }
+  .verdict-llm-label { display: none; }
+
+  /* GAP ANALYSIS */
+  .gap-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    margin-bottom: 32px;
+  }
+  .gap-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 28px;
+    position: relative;
+  }
+  .gap-num {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-weight: 300;
+    font-size: 64px;
+    line-height: 1;
+    color: var(--accent);
+    margin-bottom: 12px;
+  }
+  .gap-card h4 {
+    font-family: 'Fraunces', serif;
+    font-weight: 500;
+    font-size: 18px;
+    margin-bottom: 12px;
+  }
+  .gap-card p {
+    font-size: 14px;
+    color: var(--text-dim);
+    line-height: 1.6;
+  }
+
+  /* VENDOR TABLE */
+  .vendor-section {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 32px;
+  }
+  .vendor-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  .vendor-table th {
+    background: var(--bg-elevated);
+    padding: 16px 24px;
+    text-align: left;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--text-dim);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    border-bottom: 1px solid var(--border);
+  }
+  .vendor-table td {
+    padding: 20px 24px;
+    border-bottom: 1px solid var(--border);
+    font-size: 14px;
+  }
+  .vendor-table tr:last-child td { border-bottom: none; }
+  .vendor-table tr.recommended {
+    background: var(--recommended-bg);
+    position: relative;
+  }
+  .vendor-table tr.recommended td:first-child {
+    border-left: 3px solid var(--accent);
+    padding-left: 21px;
+  }
+  .vendor-name {
+    font-family: 'Fraunces', serif;
+    font-weight: 500;
+    font-size: 17px;
+  }
+  .vendor-name em { font-style: italic; color: var(--accent); font-weight: 400; margin-left: 8px; font-size: 11px; font-family: 'JetBrains Mono', monospace; letter-spacing: 0.1em; text-transform: uppercase; }
+  .vendor-score {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-weight: 300;
+    font-size: 28px;
+  }
+  .vendor-score.red { color: var(--red); }
+  .vendor-score.yellow { color: var(--yellow); }
+  .vendor-score.green { color: var(--green); }
+  .vendor-badge {
+    display: inline-block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    padding: 4px 10px;
+    border-radius: 2px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+  .vendor-badge.danger { background: var(--red-bg); color: var(--red); border: 1px solid var(--red-border); }
+  .vendor-badge.warn { background: var(--yellow-bg); color: var(--yellow); border: 1px solid var(--yellow-border); }
+  .vendor-badge.good { background: var(--green-bg); color: var(--green); border: 1px solid var(--green-border); }
+
+  /* CTA */
+  .cta-card {
+    background: linear-gradient(135deg, var(--surface) 0%, var(--surface-2) 100%);
+    border: 1px solid var(--border-bright);
+    border-radius: 4px;
+    padding: 56px;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    gap: 40px;
+    position: relative;
+    overflow: hidden;
+  }
+  .cta-card::before {
+    content: '';
+    position: absolute;
+    top: -50%; right: -10%;
+    width: 600px; height: 600px;
+    background: radial-gradient(circle, var(--cta-glow), transparent 70%);
+    pointer-events: none;
+  }
+  .cta-content { position: relative; }
+  .cta-eyebrow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 16px;
+  }
+  .cta-content h3 {
+    font-family: 'Fraunces', serif;
+    font-weight: 300;
+    font-size: 38px;
+    line-height: 1.1;
+    margin-bottom: 16px;
+  }
+  .cta-content h3 em { font-style: italic; color: var(--accent); }
+  .cta-content p {
+    color: var(--text-dim);
+    font-size: 15px;
+    max-width: 480px;
+    line-height: 1.6;
+  }
+  .cta-actions {
+    display: flex; flex-direction: column; gap: 12px;
+    position: relative;
+    min-width: 220px;
+  }
+  .btn-outline {
+    background: transparent;
+    border: 1px solid var(--border-bright);
+    color: var(--text);
+  }
+  .btn-outline:hover {
+    border-color: var(--accent);
+    background: var(--surface-2);
+    box-shadow: none;
+  }
+
+  /* MODAL */
+  .modal-overlay {
+    position: fixed; inset: 0;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(8px);
+    z-index: 100;
+    display: none;
+    align-items: center; justify-content: center;
+    padding: 24px;
+    animation: fadeIn 0.2s ease;
+  }
+  .modal-overlay.active { display: flex; }
+  .modal {
+    background: var(--bg-elevated);
+    border: 1px solid var(--border-bright);
+    border-radius: 4px;
+    max-width: 640px;
+    width: 100%;
+    max-height: 85vh;
+    overflow-y: auto;
+  }
+  .modal-header {
+    padding: 24px 32px;
+    border-bottom: 1px solid var(--border);
+    display: flex; justify-content: space-between; align-items: flex-start;
+    gap: 24px;
+  }
+  .modal-header h4 {
+    font-family: 'Fraunces', serif;
+    font-weight: 400;
+    font-size: 22px;
+    line-height: 1.3;
+  }
+  .modal-close {
+    background: none; border: none;
+    color: var(--text-dim);
+    cursor: pointer; font-size: 24px;
+    line-height: 1; padding: 0;
+  }
+  .modal-close:hover { color: var(--text); }
+  .modal-body { padding: 32px; }
+  .modal-status {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    padding: 6px 12px;
+    border-radius: 2px;
+    margin-bottom: 24px;
+  }
+  .modal-status.green { background: var(--green-bg); color: var(--green); border: 1px solid var(--green-border); }
+  .modal-status.yellow { background: var(--yellow-bg); color: var(--yellow); border: 1px solid var(--yellow-border); }
+  .modal-status.red { background: var(--red-bg); color: var(--red); border: 1px solid var(--red-border); }
+  .modal-section { margin-bottom: 24px; }
+  .modal-section:last-child { margin-bottom: 0; }
+  .modal-section-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--text-dim);
+    margin-bottom: 10px;
+  }
+  .modal-section p {
+    color: var(--text);
+    line-height: 1.6;
+  }
+  .modal-quote {
+    background: var(--surface);
+    border-left: 2px solid var(--accent);
+    padding: 16px 20px;
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-size: 15px;
+    color: var(--text);
+    line-height: 1.6;
+    border-radius: 0 3px 3px 0;
+  }
+
+  /* RESTART */
+  .restart-btn {
+    margin-top: 32px;
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+    padding: 12px 20px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    cursor: pointer;
+    border-radius: 3px;
+    transition: all 0.2s;
+  }
+  .restart-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* RESPONSIVE */
+  /* ===== RESPONSIVE: TABLET (≤980px) ===== */
+  @media (max-width: 980px) {
+    .top-grid { grid-template-columns: 1fr; }
+    .gap-grid { grid-template-columns: 1fr 1fr; }
+    .cta-card { grid-template-columns: 1fr; padding: 32px; }
+    .header-meta > span { display: none; }
+    .header-meta { gap: 12px; }
+    /* New sections */
+    .nav-links { display: none; }
+    .steps-grid { grid-template-columns: repeat(2, 1fr); }
+    .pricing-grid { grid-template-columns: 1fr; max-width: 480px; margin: 0 auto; }
+    .content-section { padding: 70px 0; }
+    .sample-row { grid-template-columns: 1.5fr repeat(5, 1fr); font-size: 11px; }
+    .sample-prompt { font-size: 12px; padding: 10px; }
+    .sample-cell { padding: 10px 6px; font-size: 12px; }
+  }
+
+  /* ===== RESPONSIVE: MOBILE (≤768px) ===== */
+  @media (max-width: 768px) {
+    .wrap { padding: 0 18px; }
+    header { padding: 16px 0; }
+    .logo { font-size: 20px; gap: 8px; }
+    .logo-mark { width: 22px; height: 22px; }
+
+    /* Hero */
+    .hero { padding: 44px 0 32px; }
+    .hero-eyebrow { font-size: 10px; margin-bottom: 16px; }
+    .hero h1 { font-size: clamp(34px, 9vw, 52px); line-height: 1.02; margin-bottom: 18px; }
+    .hero-sub { font-size: 15px; margin-bottom: 32px; line-height: 1.55; }
+
+    /* Form */
+    .audit-form { padding: 24px; }
+    .form-label-row { margin-bottom: 22px; padding-bottom: 16px; }
+    .form-title { font-size: 17px; }
+    .form-id { font-size: 10px; }
+    .field { margin-bottom: 16px; }
+    .field-row { grid-template-columns: 1fr; gap: 0; }
+    .field input, .field select { font-size: 16px; padding: 13px 14px; } /* 16px prevents iOS auto-zoom */
+    .btn { width: 100%; justify-content: center; padding: 15px 22px; font-size: 13px; }
+    .trust-row { gap: 14px; flex-wrap: wrap; font-size: 10px; margin-top: 24px; padding-top: 18px; }
+
+    /* Progress screen */
+    .progress-screen { padding: 36px 0; }
+    .progress-header { margin-bottom: 28px; }
+    .progress-header h2 { font-size: 28px; margin-bottom: 8px; }
+    .progress-status { font-size: 11px; }
+    .progress-row { grid-template-columns: 1fr; }
+    .progress-llm { border-right: none; border-bottom: 1px solid var(--border); padding: 12px 18px; font-size: 12px; }
+    .progress-cell { padding: 12px 4px; min-height: 48px; font-size: 13px; }
+    .progress-bar-wrap { padding: 16px 18px; gap: 12px; flex-wrap: wrap; }
+    .progress-count { font-size: 11px; min-width: 56px; }
+
+    /* Results header */
+    .results-screen { padding: 32px 0 56px; }
+    .results-header { margin-bottom: 28px; gap: 16px; }
+    .results-title-block h2 { font-size: 30px; }
+    .results-meta { font-size: 11px; line-height: 1.7; }
+    .restart-btn { padding: 10px 16px; font-size: 10px; }
+
+    /* Top grid */
+    .top-grid { gap: 14px; margin-bottom: 14px; }
+    .score-card { padding: 24px 20px; }
+    .score-label { font-size: 9px; margin-bottom: 14px; }
+    .score-display { width: 200px; height: 200px; margin-bottom: 20px; }
+    .score-number { font-size: 76px; }
+    .score-suffix { font-size: 10px; }
+    .score-verdict { font-size: 13px; padding-top: 16px; }
+
+    .summary-stats { padding: 22px 20px; gap: 18px; }
+    .summary-header h3 { font-size: 18px; }
+    .summary-header p { font-size: 10px; }
+    .stat-row { grid-template-columns: 1fr 1fr 1fr; }
+    .stat { padding: 14px 10px; }
+    .stat-label { font-size: 9px; margin-bottom: 10px; }
+    .stat-value { font-size: 28px; }
+    .stat-sub { font-size: 10px; }
+
+    /* Section headers */
+    .section-header { padding: 18px 20px; gap: 8px; }
+    .section-header h3 { font-size: 17px; }
+    .section-legend { font-size: 10px; gap: 12px; }
+
+    /* ===== MATRIX → CARD STACK on mobile ===== */
+    .matrix-wrap { overflow-x: visible; padding: 12px; }
+    .matrix { min-width: 0; display: block; }
+    .matrix thead { display: none; }
+    .matrix tbody { display: block; }
+    .matrix tr {
+      display: block;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      margin-bottom: 10px;
+      border-radius: 3px;
+      overflow: hidden;
+    }
+    .matrix tr:last-child { margin-bottom: 0; }
+    .matrix td {
+      display: block;
+      border: none;
+      border-bottom: 1px solid var(--border);
+      padding: 0;
+    }
+    .matrix td:last-child { border-bottom: none; }
+    .prompt-cell {
+      padding: 14px 18px;
+      background: var(--surface-2);
+      border-bottom: 1px solid var(--border);
+    }
+    .prompt-cell .prompt-text { font-size: 14px; line-height: 1.4; }
+    .verdict-cell {
+      height: auto;
+      cursor: pointer;
+    }
+    .verdict-cell .verdict-inner {
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
+      padding: 13px 18px;
+      gap: 12px;
+      width: 100%;
+      border-top: none !important;
+      border-bottom: none !important;
+    }
+    .verdict-llm-label {
+      display: inline-block !important;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--text);
+      letter-spacing: 0.04em;
+      flex: 1;
+      text-align: left;
+    }
+    .verdict-cell .verdict-icon { font-size: 16px; }
+    .verdict-cell .verdict-rank { font-size: 11px; min-width: 28px; text-align: right; }
+
+    /* Gap cards */
+    .gap-grid { grid-template-columns: 1fr; gap: 12px; }
+    .grid-section > div[style*="padding: 32px"] { padding: 16px !important; }
+    .gap-card { padding: 22px 20px; }
+    .gap-num { font-size: 48px; margin-bottom: 8px; }
+    .gap-card h4 { font-size: 16px; margin-bottom: 8px; }
+    .gap-card p { font-size: 13px; line-height: 1.55; }
+
+    /* ===== VENDOR TABLE → STACKED CARDS on mobile ===== */
+    .vendor-table { display: block; }
+    .vendor-table thead { display: none; }
+    .vendor-table tbody { display: block; }
+    .vendor-table tr {
+      display: block;
+      padding: 20px 22px;
+      border-bottom: 1px solid var(--border);
+      position: relative;
+    }
+    .vendor-table tr:last-child { border-bottom: none; }
+    .vendor-table tr.recommended {
+      border-left: 3px solid var(--accent);
+    }
+    .vendor-table tr.recommended td:first-child {
+      border-left: none;
+      padding-left: 0;
+    }
+    .vendor-table td {
+      display: block;
+      padding: 0;
+      border: none;
+      margin-bottom: 14px;
+      font-size: 14px;
+    }
+    .vendor-table td:last-child { margin-bottom: 0; }
+    .vendor-table td:first-child {
+      padding-bottom: 14px;
+      margin-bottom: 14px;
+      border-bottom: 1px solid var(--border);
+    }
+    .vendor-name { font-size: 17px; }
+    .vendor-score { font-size: 24px; }
+    .vendor-table td[data-label]::before {
+      content: attr(data-label);
+      display: block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9px;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      color: var(--text-dim);
+      margin-bottom: 6px;
+    }
+    .vendor-table td:nth-child(2) { color: var(--text-dim); font-size: 13px; line-height: 1.5; }
+
+    /* CTA */
+    .cta-card { padding: 28px 22px; gap: 22px; }
+    .cta-eyebrow { font-size: 10px; margin-bottom: 12px; }
+    .cta-content h3 { font-size: 26px; margin-bottom: 12px; }
+    .cta-content p { font-size: 14px; }
+    .cta-actions { min-width: 0; }
+
+    /* Modal */
+    .modal-overlay { padding: 12px; }
+    .modal { max-height: 90vh; }
+    .modal-header { padding: 18px 22px; gap: 16px; }
+    .modal-header h4 { font-size: 17px; line-height: 1.35; }
+    .modal-close { font-size: 26px; padding: 4px 8px; }
+    .modal-body { padding: 22px; }
+    .modal-status { font-size: 10px; margin-bottom: 20px; }
+    .modal-section { margin-bottom: 20px; }
+    .modal-section p { font-size: 14px; }
+    .modal-quote { font-size: 14px; padding: 14px 16px; }
+    /* New sections — mobile */
+    .content-section { padding: 56px 0; }
+    .section-heading { margin-bottom: 40px; }
+    .steps-grid { grid-template-columns: 1fr; gap: 14px; }
+    .step-card { padding: 24px 22px; }
+    .step-num { font-size: 44px; margin-bottom: 12px; }
+    .step-card h3 { font-size: 17px; }
+    .price-card { padding: 28px 24px; }
+    .price-num { font-size: 44px; }
+    .sample-card { padding: 24px 20px; }
+    .sample-head { flex-direction: column; gap: 16px; }
+    .sample-score { text-align: left; }
+    .sample-score-num { font-size: 56px; }
+    .sample-title { font-size: 18px; }
+    /* Sample matrix collapses to scrollable on mobile */
+    .sample-matrix { overflow-x: auto; }
+    .sample-row { min-width: 480px; }
+    .nav-cta { padding: 8px 12px; font-size: 10px; }
+    .nav-signin { display: none; }
+  }
+
+  /* ===== RESPONSIVE: NARROW MOBILE (≤400px) ===== */
+  @media (max-width: 400px) {
+    .wrap { padding: 0 14px; }
+    .audit-form { padding: 20px; }
+    .hero h1 { font-size: 30px; }
+    .hero-sub { font-size: 14px; }
+    .form-label-row { flex-direction: column; align-items: flex-start; gap: 6px; }
+    .results-title-block h2 { font-size: 26px; }
+    .progress-header h2 { font-size: 24px; }
+    .score-display { width: 180px; height: 180px; }
+    .score-number { font-size: 68px; }
+    .stat-value { font-size: 24px; }
+    .cta-content h3 { font-size: 22px; }
+  }
+
+/* =====================================================
+   ANTI-CLONE WATERMARK LAYERS (3, 4, 5)
+   © 2026 Naomi · All Rights Reserved
+   ===================================================== */
+.wm-layer {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9999;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+  letter-spacing: 0.4em;
+  line-height: 80px;
+  white-space: pre-wrap;
+  word-break: break-all;
+  overflow: hidden;
+  user-select: none;
+  -webkit-user-select: none;
+}
+.wm-diag {
+  color: rgba(255, 255, 255, 0.012);
+  transform: rotate(-25deg) scale(1.5);
+  transform-origin: center;
+}
+.wm-counter {
+  color: rgba(255, 255, 255, 0.008);
+  transform: rotate(25deg) scale(1.5);
+  transform-origin: center;
+  font-size: 11px;
+}
+.wm-corner {
+  position: fixed;
+  bottom: 2px;
+  right: 4px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 7px;
+  color: rgba(255, 255, 255, 0.04);
+  z-index: 10000;
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-select: none;
+  letter-spacing: 0.05em;
+}
+body.light-mode .wm-diag { color: rgba(0, 0, 0, 0.012); }
+body.light-mode .wm-counter { color: rgba(0, 0, 0, 0.008); }
+body.light-mode .wm-corner { color: rgba(0, 0, 0, 0.05); }
+/* =====================================================
+   BLUEPRINT WORLD MAP — hero background, theme-adaptive
+   Dark mode → cyan (var(--accent) = #4fe8ff)
+   Light mode → blood red (var(--accent) = #a4161a)
+   ===================================================== */
+.hero { position: relative; overflow: hidden; }
+.hero-worldmap {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 1400px;
+  max-width: 130%;
+  height: 720px;
+  pointer-events: none;
+  z-index: 0;
+  background-color: var(--accent);
+  -webkit-mask-image: url('https://cdn.jsdelivr.net/gh/flekschas/simple-world-map/world-map.min.svg');
+  mask-image: url('https://cdn.jsdelivr.net/gh/flekschas/simple-world-map/world-map.min.svg');
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+  -webkit-mask-size: contain;
+  mask-size: contain;
+  opacity: 0.13;
+  animation: heroMapFade 1.8s ease-out;
+}
+.hero > *:not(.hero-worldmap) {
+  position: relative;
+  z-index: 1;
+}
+@keyframes heroMapFade {
+  from { opacity: 0; transform: translate(-50%, -50%) scale(0.96); }
+  to   { opacity: 0.13; transform: translate(-50%, -50%) scale(1); }
+}
+@media (max-width: 980px) {
+  .hero-worldmap {
+    width: 110%;
+    height: 520px;
+    opacity: 0.10;
+  }
+  @keyframes heroMapFade {
+    from { opacity: 0; transform: translate(-50%, -50%) scale(0.96); }
+    to   { opacity: 0.10; transform: translate(-50%, -50%) scale(1); }
+  }
+}
+@media (max-width: 640px) {
+  .hero-worldmap {
+    width: 130%;
+    height: 380px;
+    opacity: 0.08;
+  }
+}
+</style>
+</head>
+<body>
+<!-- Layer 3: Diagonal repeating text watermark, very low opacity -->
+<div class="wm-layer wm-diag" aria-hidden="true">© NAOMI · GEOTRACKER · 2026 · © NAOMI · GEOTRACKER · 2026 · © NAOMI · GEOTRACKER · 2026 · © NAOMI · GEOTRACKER · 2026 · © NAOMI · GEOTRACKER · 2026 · © NAOMI · GEOTRACKER · 2026 · © NAOMI · GEOTRACKER · 2026 · © NAOMI · GEOTRACKER · 2026 · © NAOMI · GEOTRACKER · 2026 · © NAOMI · GEOTRACKER · 2026 · © NAOMI · GEOTRACKER · 2026 · © NAOMI · GEOTRACKER · 2026 · © NAOMI · GEOTRACKER · 2026 · © NAOMI · GEOTRACKER · 2026 · © NAOMI · GEOTRACKER · 2026 · © NAOMI · GEOTRACKER · 2026</div>
+<!-- Layer 4: Counter-diagonal pattern, even lower opacity -->
+<div class="wm-layer wm-counter" aria-hidden="true">GT-2026-NM-001 · GT-2026-NM-001 · GT-2026-NM-001 · GT-2026-NM-001 · GT-2026-NM-001 · GT-2026-NM-001 · GT-2026-NM-001 · GT-2026-NM-001 · GT-2026-NM-001 · GT-2026-NM-001 · GT-2026-NM-001 · GT-2026-NM-001 · GT-2026-NM-001 · GT-2026-NM-001 · GT-2026-NM-001 · GT-2026-NM-001 · GT-2026-NM-001 · GT-2026-NM-001 · GT-2026-NM-001 · GT-2026-NM-001 · GT-2026-NM-001 · GT-2026-NM-001</div>
+<!-- Layer 5: Corner micro-attribution (invisible to skim) -->
+<div class="wm-corner" aria-hidden="true">© Naomi · GeoTracker · Build GT-2026-NM-001 · 2026</div>
+
+<header>
+  <div class="wrap header-inner">
+    <div class="logo">
+      <span class="logo-mark"></span>
+      Geo<em>Tracker</em>
+    </div>
+    <nav class="nav-links">
+      <a href="#overview" class="nav-link" onclick="goToHash(event,'overview')">Overview</a>
+      <a href="#how-it-works" class="nav-link" onclick="goToHash(event,'how-it-works')">How it Works</a>
+      <a href="#pricing" class="nav-link" onclick="goToHash(event,'pricing')">Pricing</a>
+      <a href="#sample-report" class="nav-link" onclick="goToHash(event,'sample-report')">Sample Report</a>
+    </nav>
+    <div class="header-meta">
+      <a href="#" class="nav-signin">Sign in</a>
+      <button class="nav-cta" onclick="goToHash(event,'overview')">Get Free Audit</button>
+      <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" aria-label="Toggle theme">
+        <svg class="theme-icon theme-icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <circle cx="12" cy="12" r="4"/>
+          <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/>
+        </svg>
+        <svg class="theme-icon theme-icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<!-- SCREEN 1: HERO + FORM -->
+<section id="screen-hero" class="screen active">
+  <div class="wrap hero" id="overview">
+    <!-- Blueprint world map background — theme-adaptive via background-color + CSS mask -->
+    <div class="hero-worldmap" aria-hidden="true"></div>
+    <div class="hero-eyebrow">AI Visibility Audit · For Local Businesses</div>
+    <h1>When your customers<br>ask AI, are <em>you</em><br>the answer?</h1>
+    <p class="hero-sub">
+      Get your Ghost Score in 30 seconds — across ChatGPT, Claude, Perplexity, Gemini, and Grok.
+    </p>
+
+    <form class="audit-form" id="auditForm" onsubmit="return runAudit(event)">
+      <div class="form-label-row">
+        <span class="form-title">Launch a live audit</span>
+        <span class="form-id">REQ_ID · <span id="reqId">—</span></span>
+      </div>
+
+      <div class="field">
+        <label for="domain">Business Domain</label>
+        <input type="text" id="domain" placeholder="maplecourtdental.com" value="maplecourtdental.com" required />
+      </div>
+
+      <div class="field">
+        <label for="businessName">Business Name</label>
+        <input type="text" id="businessName" placeholder="Maple Court Dental" value="Maple Court Dental" required />
+      </div>
+
+      <div class="field-row">
+        <div class="field">
+          <label for="industry">Industry</label>
+          <select id="industry" required>
+            <option value="dental">Dental</option>
+            <option value="legal">Legal · Personal Injury</option>
+            <option value="hvac">HVAC</option>
+            <option value="plumbing">Plumbing</option>
+            <option value="realestate">Real Estate</option>
+            <option value="restaurant">Restaurant</option>
+            <option value="auto">Auto Repair</option>
+            <option value="med-spa">Med Spa</option>
+            <option value="chiro">Chiropractic</option>
+            <option value="vet">Veterinary</option>
+            <option value="accounting">Accounting</option>
+            <option value="insurance">Insurance</option>
+            <option value="fitness">Fitness · Gym</option>
+            <option value="salon">Salon · Barber</option>
+            <option value="landscaping">Landscaping</option>
+            <option value="electrician">Electrician</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="city">City</label>
+          <input type="text" id="city" placeholder="Houston, TX" value="Houston, TX" required />
+        </div>
+      </div>
+
+      <button type="submit" class="btn" id="runBtn">
+        Run Audit
+        <span class="btn-arrow">→</span>
+      </button>
+
+      <div class="trust-row">
+        <span>~10 SEC RUNTIME</span>
+        <span>25 DATA POINTS</span>
+        <span>NO CARD REQUIRED</span>
+      </div>
+    </form>
+  </div>
+
+  <!-- ===== HOW IT WORKS ===== -->
+  <section id="how-it-works" class="content-section">
+    <div class="wrap">
+      <div class="section-heading">
+        <div class="section-eyebrow">The Process</div>
+        <h2>How it <em>works.</em></h2>
+        <p class="section-lede">Four steps, thirty seconds, five language models. No installation, no credit card, no waiting.</p>
+      </div>
+
+      <div class="steps-grid">
+        <div class="step-card">
+          <div class="step-num">01</div>
+          <h3>Submit your details</h3>
+          <p>Enter your business domain, name, industry, and city. We support 16 service categories from dental to legal to HVAC.</p>
+        </div>
+        <div class="step-card">
+          <div class="step-num">02</div>
+          <h3>We query 5 AI models</h3>
+          <p>ChatGPT, Claude, Perplexity, Gemini, and Grok are asked the same five industry-specific questions your real customers ask — in parallel.</p>
+        </div>
+        <div class="step-card">
+          <div class="step-num">03</div>
+          <h3>Each response is scored</h3>
+          <p>We detect whether you're named, where you rank, and whether the AI gave a way to contact you. Each cell becomes green, yellow, or red.</p>
+        </div>
+        <div class="step-card">
+          <div class="step-num">04</div>
+          <h3>You get your Ghost Score</h3>
+          <p>A single 0–100 score, a 5×5 visibility matrix, gap analysis, and a path to fix what's broken. All in under 30 seconds.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== PRICING ===== -->
+  <section id="pricing" class="content-section">
+    <div class="wrap">
+      <div class="section-heading">
+        <div class="section-eyebrow">Pricing</div>
+        <h2>Run as many audits<br>as you want, <em>free.</em></h2>
+        <p class="section-lede">The basic audit is free forever. Pay only when you want deeper analysis or hands-on help fixing what's broken.</p>
+      </div>
+
+      <div class="pricing-grid">
+        <div class="price-card">
+          <div class="price-tier">Free</div>
+          <div class="price-amount"><span class="price-num">$0</span><span class="price-period">forever</span></div>
+          <p class="price-tagline">For business owners who want to know where they stand.</p>
+          <ul class="price-features">
+            <li>Full 5×5 visibility matrix</li>
+            <li>Ghost Score (0–100)</li>
+            <li>Top 3 gap analysis</li>
+            <li>Weekly Pulse Report email</li>
+            <li>Vendor comparison table</li>
+          </ul>
+          <button class="price-cta-outline" onclick="goToHash(event,'overview')">Start Free</button>
+        </div>
+
+        <div class="price-card featured">
+          <div class="price-badge">Most Popular</div>
+          <div class="price-tier">Premium</div>
+          <div class="price-amount"><span class="price-num">$30</span><span class="price-period">/month</span></div>
+          <p class="price-tagline">For owners who want the full diagnostic, not just the symptom.</p>
+          <ul class="price-features">
+            <li>Everything in Free, plus:</li>
+            <li>Full gap analysis with suggested fixes</li>
+            <li>Top 3 competitor benchmarks</li>
+            <li>Suburb-by-suburb visibility map</li>
+            <li>Priority badge on your audit profile</li>
+            <li>Unlimited re-audits</li>
+          </ul>
+          <button class="price-cta" onclick="goToHash(event,'overview')">Choose Premium</button>
+        </div>
+
+        <div class="price-card">
+          <div class="price-tier">Ultra Premium</div>
+          <div class="price-amount"><span class="price-num">$150</span><span class="price-period">/month</span></div>
+          <p class="price-tagline">For owners who want the problem fixed, not just measured.</p>
+          <ul class="price-features">
+            <li>Everything in Premium, plus:</li>
+            <li>Human-in-the-loop optimization</li>
+            <li>Ongoing red-X remediation</li>
+            <li>AI-optimized hosted content</li>
+            <li>Custom content roadmap</li>
+            <li>Direct line to your dedicated specialist</li>
+          </ul>
+          <button class="price-cta-outline" onclick="goToHash(event,'overview')">Talk to Sales</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== SAMPLE REPORT ===== -->
+  <section id="sample-report" class="content-section">
+    <div class="wrap">
+      <div class="section-heading">
+        <div class="section-eyebrow">Sample Report</div>
+        <h2>Here's what your<br><em>Ghost Report</em> looks like.</h2>
+        <p class="section-lede">Below is a real audit for a fictional dental practice. This is exactly what you'll see when you run your own.</p>
+      </div>
+
+      <div class="sample-card">
+        <div class="sample-head">
+          <div>
+            <div class="sample-meta">SAMPLE AUDIT · MAPLECOURTDENTAL.COM</div>
+            <div class="sample-title">Maple Court Dental — Houston, TX</div>
+          </div>
+          <div class="sample-score">
+            <div class="sample-score-num">72</div>
+            <div class="sample-score-label">Ghost Score</div>
+          </div>
+        </div>
+
+        <div class="sample-matrix">
+          <div class="sample-row sample-row-head">
+            <div>Prompt</div>
+            <div>ChatGPT</div>
+            <div>Claude</div>
+            <div>Perplexity</div>
+            <div>Gemini</div>
+            <div>Grok</div>
+          </div>
+          <div class="sample-row">
+            <div class="sample-prompt">"Best dentist in Houston"</div>
+            <div class="sample-cell red">✗</div>
+            <div class="sample-cell yellow">~</div>
+            <div class="sample-cell green">✓</div>
+            <div class="sample-cell red">✗</div>
+            <div class="sample-cell red">✗</div>
+          </div>
+          <div class="sample-row">
+            <div class="sample-prompt">"Family dentist near me"</div>
+            <div class="sample-cell red">✗</div>
+            <div class="sample-cell red">✗</div>
+            <div class="sample-cell yellow">~</div>
+            <div class="sample-cell yellow">~</div>
+            <div class="sample-cell red">✗</div>
+          </div>
+          <div class="sample-row">
+            <div class="sample-prompt">"Emergency dentist Houston"</div>
+            <div class="sample-cell red">✗</div>
+            <div class="sample-cell yellow">~</div>
+            <div class="sample-cell red">✗</div>
+            <div class="sample-cell red">✗</div>
+            <div class="sample-cell yellow">~</div>
+          </div>
+        </div>
+
+        <div class="sample-verdict">
+          <div class="sample-verdict-dot"></div>
+          <div>
+            <strong>Critical visibility gap.</strong> Customers asking AI for dentists in Houston are not seeing this practice in 60% of the most common queries. Fixable in 4–6 weeks with structured citations and review velocity.
+          </div>
+        </div>
+
+        <button class="sample-cta" onclick="goToHash(event,'overview')">
+          Run Your Own Audit
+          <span style="font-family:'JetBrains Mono',monospace">→</span>
+        </button>
+      </div>
+    </div>
+  </section>
+
+</section>
+
+<!-- SCREEN 2: AUDIT PROGRESS -->
+<section id="screen-progress" class="screen">
+  <div class="wrap progress-screen">
+    <div class="progress-header">
+      <h2>Querying the <em>machines.</em></h2>
+      <div class="progress-status" id="progressStatus">Initializing five language models · 25 simultaneous queries…</div>
+    </div>
+
+    <div class="progress-grid" id="progressGrid"></div>
+
+    <div class="progress-bar-wrap">
+      <span class="progress-count" id="progressCount">0 / 25</span>
+      <div class="progress-bar"><div class="progress-bar-fill" id="progressBarFill"></div></div>
+      <span class="progress-count" id="progressPct">0%</span>
+    </div>
+  </div>
+</section>
+
+<!-- SCREEN 3: RESULTS -->
+<section id="screen-results" class="screen">
+  <div class="wrap results-screen">
+    <div class="results-header">
+      <div class="results-title-block">
+        <h2 id="resultsTitle">Audit complete.</h2>
+        <div class="results-meta">
+          <span id="metaBiz">—</span>
+          <span class="sep">·</span>
+          <span id="metaIndustry">—</span>
+          <span class="sep">·</span>
+          <span id="metaCity">—</span>
+          <span class="sep">·</span>
+          <span id="metaTime">—</span>
+        </div>
+      </div>
+      <button class="restart-btn" onclick="goToScreen('hero')">← Run Another Audit</button>
+    </div>
+
+    <div class="top-grid">
+      <div class="score-card">
+        <div class="score-label">Ghost Score · Higher = More Invisible</div>
+        <div class="score-display">
+          <svg viewBox="0 0 200 200">
+            <circle class="score-track" cx="100" cy="100" r="84" fill="none" stroke-width="14"/>
+            <circle class="score-fill" id="scoreFill" cx="100" cy="100" r="84" fill="none" stroke-width="14"
+                    stroke-dasharray="527.79" stroke-dashoffset="527.79"/>
+          </svg>
+          <div class="score-value">
+            <div class="score-number" id="scoreNumber">0</div>
+            <div class="score-suffix">/ 100</div>
+          </div>
+        </div>
+        <div class="score-verdict" id="scoreVerdict">—</div>
+      </div>
+
+      <div class="summary-stats">
+        <div class="summary-header">
+          <h3>Visibility breakdown</h3>
+          <p>25 prompts · 5 LLMs · Live audit</p>
+        </div>
+        <div class="stat-row">
+          <div class="stat">
+            <div class="stat-label"><span class="stat-dot green"></span>Visible</div>
+            <div class="stat-value green" id="greenCount">0</div>
+            <div class="stat-sub">Direct mentions</div>
+          </div>
+          <div class="stat">
+            <div class="stat-label"><span class="stat-dot yellow"></span>Partial</div>
+            <div class="stat-value yellow" id="yellowCount">0</div>
+            <div class="stat-sub">Listed but not ranked</div>
+          </div>
+          <div class="stat">
+            <div class="stat-label"><span class="stat-dot red"></span>Invisible</div>
+            <div class="stat-value red" id="redCount">0</div>
+            <div class="stat-sub">Not mentioned at all</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid-section">
+      <div class="section-header">
+        <h3>Prompt × LLM matrix</h3>
+        <div class="section-legend">
+          <span class="legend-item"><span class="legend-dot" style="background: var(--green);"></span>VISIBLE</span>
+          <span class="legend-item"><span class="legend-dot" style="background: var(--yellow);"></span>PARTIAL</span>
+          <span class="legend-item"><span class="legend-dot" style="background: var(--red);"></span>INVISIBLE</span>
+        </div>
+      </div>
+      <div class="matrix-wrap">
+        <table class="matrix" id="matrixTable"></table>
+      </div>
+    </div>
+
+    <div class="grid-section">
+      <div class="section-header">
+        <h3>Gap analysis</h3>
+        <div class="section-legend"><span>Why you're invisible — and what's fixable</span></div>
+      </div>
+      <div style="padding: 32px;">
+        <div class="gap-grid">
+          <div class="gap-card">
+            <div class="gap-num">01</div>
+            <h4>No structured citations</h4>
+            <p>LLMs source from Yelp, Google Business, Reddit, and structured directories. Your domain has 3 of 12 expected citation signals — competitors average 9.</p>
+          </div>
+          <div class="gap-card">
+            <div class="gap-num">02</div>
+            <h4>Thin location signals</h4>
+            <p>Your homepage mentions your city 2 times. Top-ranked competitors mention it 14+ times across service pages, FAQs, and structured data.</p>
+          </div>
+          <div class="gap-card">
+            <div class="gap-num">03</div>
+            <h4>Review velocity gap</h4>
+            <p>You have 38 reviews. The 3 businesses ChatGPT recommends have 240+, 180+, and 160+ reviews respectively, with recent activity in the last 30 days.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="vendor-section">
+      <div class="section-header">
+        <h3>Vendor comparison · Who can fix this?</h3>
+        <div class="section-legend"><span>Local AI visibility specialists</span></div>
+      </div>
+      <table class="vendor-table">
+        <thead>
+          <tr>
+            <th>Vendor</th>
+            <th>Specialty</th>
+            <th>Projected score after 90 days</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="recommended">
+            <td><span class="vendor-name">Upserv<em>Recommended</em></span></td>
+            <td data-label="Specialty">AI visibility, structured citations, review acceleration</td>
+            <td data-label="Projected (90d)"><span class="vendor-score green">12</span></td>
+            <td data-label="Status"><span class="vendor-badge good">Best Fit</span></td>
+          </tr>
+          <tr>
+            <td><span class="vendor-name">Generic SEO Agency A</span></td>
+            <td data-label="Specialty">Traditional SEO, link building</td>
+            <td data-label="Projected (90d)"><span class="vendor-score yellow">42</span></td>
+            <td data-label="Status"><span class="vendor-badge warn">Partial</span></td>
+          </tr>
+          <tr>
+            <td><span class="vendor-name">Generic SEO Agency B</span></td>
+            <td data-label="Specialty">Local SEO, GMB optimization</td>
+            <td data-label="Projected (90d)"><span class="vendor-score yellow">38</span></td>
+            <td data-label="Status"><span class="vendor-badge warn">Partial</span></td>
+          </tr>
+          <tr>
+            <td><span class="vendor-name">DIY · Status quo</span></td>
+            <td data-label="Specialty">No intervention</td>
+            <td data-label="Projected (90d)"><span class="vendor-score red">64</span></td>
+            <td data-label="Status"><span class="vendor-badge danger">Worsening</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="cta-card">
+      <div class="cta-content">
+        <div class="cta-eyebrow">Free · Weekly</div>
+        <h3>Get a <em>Pulse Report</em><br>delivered every Monday.</h3>
+        <p>We re-run this audit weekly and email you when your Ghost Score moves. Track your visibility over time, and watch competitors slip into the same blind spots you just escaped.</p>
+      </div>
+      <div class="cta-actions">
+        <button class="btn" onclick="alert('Pulse Report signup — wire to Supabase + Resend in production')">
+          Subscribe Free
+          <span class="btn-arrow">→</span>
+        </button>
+        <button class="btn btn-outline" onclick="alert('Talk to Upserv — wire to lead form in production')">
+          Talk to Upserv
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-header">
+      <h4 id="modalTitle">—</h4>
+      <button class="modal-close" onclick="closeModal()">×</button>
+    </div>
+    <div class="modal-body" id="modalBody"></div>
+  </div>
+</div>
+
+<script>
+/* =========================================================
+   GEOTRACKER · DEMO LOGIC
+   This frontend runs entirely on mock data so it can be
+   demoed without any API keys. In production, replace the
+   `simulateAudit()` function with a fetch to /api/audit.
+   ========================================================= */
+
+const LLMS = [
+  { id: 'chatgpt', name: 'ChatGPT', sub: 'GPT-4 · OpenAI' },
+  { id: 'claude',  name: 'Claude',  sub: 'Sonnet · Anthropic' },
+  { id: 'perplexity', name: 'Perplexity', sub: 'Sonar · pplx' },
+  { id: 'gemini',  name: 'Gemini',  sub: '2.5 · Google' },
+  { id: 'grok',    name: 'Grok',    sub: '3 · xAI' },
+];
+
+const INDUSTRY_PROMPTS = {
+  dental: [
+    'best dentist in {city}',
+    'top rated dental clinic {city}',
+    'family dentist {city} reviews',
+    'emergency dentist near me {city}',
+    'affordable cosmetic dentist {city}',
+  ],
+  legal: [
+    'best personal injury lawyer in {city}',
+    'top car accident attorney {city}',
+    'wrongful death lawyer {city} reviews',
+    'no win no fee attorney {city}',
+    'workers compensation lawyer {city}',
+  ],
+  hvac: [
+    'best HVAC company in {city}',
+    'AC repair {city} same day',
+    'top rated heating contractor {city}',
+    'emergency HVAC {city}',
+    'commercial HVAC service {city}',
+  ],
+  plumbing: [
+    'best plumber in {city}',
+    'emergency plumber {city}',
+    'water heater installation {city}',
+    'drain cleaning service {city}',
+    'top rated plumbing company {city}',
+  ],
+  realestate: [
+    'best realtor in {city}',
+    'top rated real estate agent {city}',
+    'first time home buyer agent {city}',
+    'luxury home realtor {city}',
+    'sell my house fast {city}',
+  ],
+  restaurant: [
+    'best restaurant in {city}',
+    'top rated dinner spot {city}',
+    'romantic restaurant {city}',
+    'best brunch in {city}',
+    'date night restaurant {city}',
+  ],
+  auto: [
+    'best auto repair shop {city}',
+    'trusted mechanic {city}',
+    'transmission repair {city}',
+    'top rated auto body shop {city}',
+    'check engine light diagnostic {city}',
+  ],
+  'med-spa': [
+    'best med spa in {city}',
+    'top botox provider {city}',
+    'laser hair removal {city}',
+    'best filler injector {city}',
+    'medical spa near me {city}',
+  ],
+  chiro: [
+    'best chiropractor in {city}',
+    'back pain chiropractor {city}',
+    'sports injury chiro {city}',
+    'top rated chiropractor {city}',
+    'chiropractor accepting new patients {city}',
+  ],
+  vet: [
+    'best veterinarian in {city}',
+    'emergency vet clinic {city}',
+    'affordable vet {city}',
+    'cat veterinarian {city}',
+    'top rated animal hospital {city}',
+  ],
+  accounting: [
+    'best CPA in {city}',
+    'small business accountant {city}',
+    'tax preparation {city}',
+    'top rated accounting firm {city}',
+    'bookkeeping services {city}',
+  ],
+  insurance: [
+    'best insurance agent {city}',
+    'auto insurance broker {city}',
+    'life insurance agent {city}',
+    'small business insurance {city}',
+    'top rated insurance agency {city}',
+  ],
+  fitness: [
+    'best gym in {city}',
+    'personal trainer {city}',
+    'top rated fitness studio {city}',
+    'crossfit gym {city}',
+    'pilates studio {city}',
+  ],
+  salon: [
+    'best hair salon {city}',
+    'top rated barber shop {city}',
+    'colorist {city}',
+    'mens haircut {city}',
+    'balayage specialist {city}',
+  ],
+  landscaping: [
+    'best landscaper in {city}',
+    'lawn care service {city}',
+    'landscape design {city}',
+    'tree trimming service {city}',
+    'top rated lawn care {city}',
+  ],
+  electrician: [
+    'best electrician in {city}',
+    'emergency electrician {city}',
+    'commercial electrician {city}',
+    'panel upgrade {city}',
+    'top rated electrical contractor {city}',
+  ],
+};
+
+let auditState = null;
+let resultsData = null;
+
+/* ----- Helpers ----- */
+function $(id) { return document.getElementById(id); }
+function goToScreen(name) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  $('screen-' + name).classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+function randomId() {
+  return Array.from({length: 6}, () => '0123456789ABCDEF'[Math.floor(Math.random()*16)]).join('');
+}
+function generateMockVerdicts(prompts, llms) {
+  // Deterministic-ish mock: ~16% green, ~24% yellow, ~60% red — paints a "ghost" picture
+  const verdicts = [];
+  let g = 4, y = 6, r = 15; // exactly 25
+  const pool = [];
+  for (let i = 0; i < g; i++) pool.push('green');
+  for (let i = 0; i < y; i++) pool.push('yellow');
+  for (let i = 0; i < r; i++) pool.push('red');
+  // shuffle deterministically by seed
+  const seed = prompts.length * 7 + llms.length;
+  for (let i = pool.length - 1; i > 0; i--) {
+    const j = ((seed * (i + 1)) % (i + 1));
+    [pool[i], pool[j]] = [pool[j], pool[i]];
+  }
+  let idx = 0;
+  for (let p = 0; p < prompts.length; p++) {
+    const row = [];
+    for (let l = 0; l < llms.length; l++) {
+      row.push({
+        verdict: pool[idx++],
+        rank: null, // filled later for greens/yellows
+        reasoning: null,
+      });
+    }
+    verdicts.push(row);
+  }
+  // Fill in ranks and reasoning
+  for (let p = 0; p < prompts.length; p++) {
+    for (let l = 0; l < llms.length; l++) {
+      const cell = verdicts[p][l];
+      if (cell.verdict === 'green') {
+        cell.rank = '#' + (Math.floor(Math.random() * 3) + 1);
+        cell.reasoning = `${llms[l].name} listed your business explicitly, with a positive descriptor. It appeared in a ranked recommendation alongside top local competitors, suggesting strong citation coverage and review velocity for this specific query.`;
+        cell.quote = `"${prompts[p].replace('{city}', 'Houston')} — top choice would be your business, known for...`;
+      } else if (cell.verdict === 'yellow') {
+        cell.rank = '#' + (Math.floor(Math.random() * 5) + 6);
+        cell.reasoning = `${llms[l].name} mentioned your business in a longer list but did not rank it among the top recommendations. This usually signals that some citation signals are present but the model defaults to better-cited or more-reviewed competitors for the top slot.`;
+        cell.quote = `"Other options to consider in the area include..."`;
+      } else {
+        cell.reasoning = `${llms[l].name} did not mention your business in its response. It instead recommended 3-5 competitors with stronger citation profiles, more reviews, and clearer location signals. This is the most common failure mode for businesses without an AI visibility strategy.`;
+        cell.quote = null;
+      }
+    }
+  }
+  return verdicts;
+}
+
+/* ----- Form submit ----- */
+// Map demo industry keys to backend industry keys
+const INDUSTRY_MAP = {
+  dental: 'dentist',
+  legal: 'lawyer',
+  hvac: 'plumber',
+  plumbing: 'plumber',
+  realestate: 'realtor',
+  restaurant: 'restaurant',
+  auto: 'auto',
+  chiro: 'dentist',
+  vet: 'vet',
+  accounting: 'accountant',
+  insurance: 'accountant',
+  fitness: 'gym',
+  salon: 'gym',
+  landscaping: 'landscaper',
+  electrician: 'plumber',
+};
+
+// Transform backend API result into the demo's verdict format
+function transformGridToVerdicts(result, demoPrompts, demoLLMs) {
+  const backendPrompts = result.prompts || [];
+  const verdicts = [];
+  for (let p = 0; p < demoPrompts.length; p++) {
+    const row = [];
+    const backendPrompt = backendPrompts[p];
+    for (let l = 0; l < demoLLMs.length; l++) {
+      const llmName = demoLLMs[l].name;
+      let cell = { verdict: 'red', rank: null, reasoning: `${llmName}: no data`, quote: null };
+      if (backendPrompt && result.grid && result.grid[backendPrompt] && result.grid[backendPrompt][llmName]) {
+        const c = result.grid[backendPrompt][llmName];
+        cell = {
+          verdict: c.score,
+          rank: c.rank ? '#' + c.rank : null,
+          reasoning: c.reasoning || `${llmName} response analyzed.`,
+          quote: null,
+        };
+      }
+      row.push(cell);
+    }
+    verdicts.push(row);
+  }
+  return verdicts;
+}
+
+function runAudit(e) {
+  e.preventDefault();
+  const domain = $('domain').value.trim();
+  const businessName = $('businessName').value.trim();
+  const industry = $('industry').value;
+  const city = $('city').value.trim();
+
+  const cityShort = city.split(',')[0].trim();
+  const prompts = (INDUSTRY_PROMPTS[industry] || INDUSTRY_PROMPTS.dental)
+    .map(p => p.replace('{city}', cityShort));
+
+  // Seed with mock verdicts; will be replaced by live API data if /api/audit is available
+  auditState = {
+    domain, businessName, industry, city, cityShort,
+    prompts, llms: LLMS,
+    verdicts: generateMockVerdicts(prompts, LLMS),
+    reqId: randomId(),
+    startedAt: Date.now(),
+    isLive: false,
+  };
+  $('reqId').textContent = auditState.reqId;
+  goToScreen('progress');
+  renderProgressGrid();
+
+  // Try the live API in parallel with the animation
+  fetch('/api/audit', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      domain,
+      businessName,
+      industry: INDUSTRY_MAP[industry] || 'dentist',
+      city,
+    }),
+  })
+  .then(r => r.ok ? r.json() : null)
+  .then(result => {
+    if (result && result.grid) {
+      auditState.verdicts = transformGridToVerdicts(result, auditState.prompts, auditState.llms);
+      auditState.realResult = result;
+      auditState.isLive = true;
+      console.log('✓ Live audit data received from /api/audit', result);
+    } else {
+      console.warn('Audit API unavailable; using mock data fallback.');
+    }
+  })
+  .catch(err => {
+    console.warn('Audit API not reachable (this is expected if opening file directly):', err.message);
+  });
+
+  runProgressAnimation();
+  return false;
+}
+
+/* ----- Progress screen ----- */
+function renderProgressGrid() {
+  const grid = $('progressGrid');
+  grid.innerHTML = '';
+  auditState.llms.forEach((llm, lIdx) => {
+    const row = document.createElement('div');
+    row.className = 'progress-row';
+    row.innerHTML = `
+      <div class="progress-llm">
+        <span class="pulse"></span>
+        ${llm.name}
+      </div>
+      <div class="progress-cells">
+        ${auditState.prompts.map((_, pIdx) =>
+          `<div class="progress-cell pending" data-l="${lIdx}" data-p="${pIdx}">—</div>`
+        ).join('')}
+      </div>
+    `;
+    grid.appendChild(row);
+  });
+}
+function runProgressAnimation() {
+  // Build a queue of all 25 cells in a smart order (column by column = LLM by LLM)
+  const queue = [];
+  for (let p = 0; p < auditState.prompts.length; p++) {
+    for (let l = 0; l < auditState.llms.length; l++) {
+      queue.push([l, p]);
+    }
+  }
+  let done = 0;
+  const total = queue.length;
+  const totalDuration = 9000; // 9 seconds
+  const interval = totalDuration / total;
+
+  // Mark first cell as querying immediately
+  function setCell(l, p, status, verdict) {
+    const cell = document.querySelector(`.progress-cell[data-l="${l}"][data-p="${p}"]`);
+    if (!cell) return;
+    cell.classList.remove('pending', 'querying', 'done', 'green', 'yellow', 'red');
+    if (status === 'querying') {
+      cell.classList.add('querying');
+      cell.textContent = '⋯';
+    } else if (status === 'done') {
+      cell.classList.add('done', verdict);
+      cell.textContent = verdict === 'green' ? '✓' : verdict === 'yellow' ? '~' : '✗';
+    }
+  }
+
+  let i = 0;
+  function tick() {
+    if (i >= queue.length) {
+      $('progressStatus').textContent = 'Synthesizing results · computing Ghost Score…';
+      setTimeout(showResults, 700);
+      return;
+    }
+    const [l, p] = queue[i];
+    setCell(l, p, 'querying');
+    // After a tiny delay, resolve it
+    setTimeout(() => {
+      const verdict = auditState.verdicts[p][l].verdict;
+      setCell(l, p, 'done', verdict);
+      done++;
+      $('progressCount').textContent = `${done} / ${total}`;
+      const pct = Math.round((done / total) * 100);
+      $('progressPct').textContent = `${pct}%`;
+      $('progressBarFill').style.width = pct + '%';
+      if (done === Math.floor(total * 0.25)) {
+        $('progressStatus').textContent = `Querying ${auditState.llms[l].name} · "${auditState.prompts[p]}"`;
+      } else if (done === Math.floor(total * 0.5)) {
+        $('progressStatus').textContent = 'Cross-referencing citations and domain signals…';
+      } else if (done === Math.floor(total * 0.75)) {
+        $('progressStatus').textContent = 'Detecting partial mentions and name collisions…';
+      }
+    }, interval * 0.6);
+    i++;
+    setTimeout(tick, interval);
+  }
+  setTimeout(tick, 400);
+}
+
+/* ----- Results screen ----- */
+function showResults() {
+  const { verdicts, prompts, llms, businessName, industry, cityShort } = auditState;
+  let g = 0, y = 0, r = 0;
+  verdicts.forEach(row => row.forEach(c => {
+    if (c.verdict === 'green') g++;
+    else if (c.verdict === 'yellow') y++;
+    else r++;
+  }));
+  const total = g + y + r;
+  // Ghost Score = % invisibility, weighted: red = full ghost, yellow = half
+  const ghostScore = Math.round(((r + y * 0.5) / total) * 100);
+
+  // Populate header
+  $('metaBiz').textContent = businessName;
+  $('metaIndustry').textContent = industry.charAt(0).toUpperCase() + industry.slice(1).replace('-', ' ');
+  $('metaCity').textContent = cityShort;
+  $('metaTime').textContent = new Date().toISOString().slice(0,16).replace('T', ' ') + ' UTC';
+
+  // Stats
+  $('greenCount').textContent = g;
+  $('yellowCount').textContent = y;
+  $('redCount').textContent = r;
+
+  // Animate score
+  const fill = $('scoreFill');
+  const num = $('scoreNumber');
+  const circumference = 527.79;
+  const offset = circumference - (ghostScore / 100) * circumference;
+  setTimeout(() => {
+    fill.style.strokeDashoffset = offset;
+    // Animate number
+    let current = 0;
+    const step = ghostScore / 60;
+    const numInterval = setInterval(() => {
+      current += step;
+      if (current >= ghostScore) {
+        current = ghostScore;
+        clearInterval(numInterval);
+      }
+      num.textContent = Math.round(current);
+    }, 25);
+
+    // Color the score based on severity
+    if (ghostScore >= 60) {
+      fill.style.stroke = 'var(--red)';
+      num.style.color = 'var(--red)';
+    } else if (ghostScore >= 30) {
+      fill.style.stroke = 'var(--yellow)';
+      num.style.color = 'var(--yellow)';
+    } else {
+      fill.style.stroke = 'var(--green)';
+      num.style.color = 'var(--green)';
+    }
+  }, 200);
+
+  // Verdict text
+  let verdictText = '';
+  if (ghostScore >= 60) {
+    verdictText = `<strong>Critical visibility gap.</strong> Customers asking AI for recommendations in your industry are not seeing you. This is fixable — and the businesses ranking above you got there in the last 12 months.`;
+  } else if (ghostScore >= 30) {
+    verdictText = `<strong>Mixed visibility.</strong> You appear in some queries but lose to better-cited competitors in others. There's real room to close the gap.`;
+  } else {
+    verdictText = `<strong>Strong visibility.</strong> You're appearing consistently across major LLMs. Maintain citation freshness and review velocity to defend your position.`;
+  }
+  $('scoreVerdict').innerHTML = verdictText;
+
+  // Render the matrix
+  renderMatrix();
+
+  goToScreen('results');
+}
+
+function renderMatrix() {
+  const { verdicts, prompts, llms } = auditState;
+  const table = $('matrixTable');
+  let html = '<thead><tr><th>Prompt</th>';
+  llms.forEach(l => { html += `<th>${l.name}</th>`; });
+  html += '</tr></thead><tbody>';
+  prompts.forEach((p, pIdx) => {
+    html += `<tr>
+      <td class="prompt-cell">
+        <span class="prompt-text">"${p}"</span>
+        <span class="prompt-meta">PROMPT_${(pIdx+1).toString().padStart(2,'0')}</span>
+      </td>`;
+    llms.forEach((l, lIdx) => {
+      const cell = verdicts[pIdx][lIdx];
+      const icon = cell.verdict === 'green' ? '✓' : cell.verdict === 'yellow' ? '~' : '✗';
+      const rank = cell.rank ? cell.rank : '—';
+      html += `<td class="verdict-cell ${cell.verdict}" onclick="showCellDetail(${pIdx}, ${lIdx})">
+        <div class="verdict-inner">
+          <span class="verdict-llm-label">${l.name}</span>
+          <span class="verdict-icon">${icon}</span>
+          <span class="verdict-rank">${rank}</span>
+        </div>
+      </td>`;
+    });
+    html += '</tr>';
+  });
+  html += '</tbody>';
+  table.innerHTML = html;
+}
+
+/* ----- Modal ----- */
+function showCellDetail(pIdx, lIdx) {
+  const { verdicts, prompts, llms, businessName } = auditState;
+  const cell = verdicts[pIdx][lIdx];
+  const llm = llms[lIdx];
+  const prompt = prompts[pIdx];
+
+  const statusLabel = cell.verdict === 'green' ? 'VISIBLE' : cell.verdict === 'yellow' ? 'PARTIAL MENTION' : 'INVISIBLE';
+
+  $('modalTitle').innerHTML = `${llm.name} <span style="color: var(--text-faint); font-family: 'JetBrains Mono', monospace; font-size: 14px;">×</span> "${prompt}"`;
+
+  let body = `<span class="modal-status ${cell.verdict}">${statusLabel}${cell.rank ? ' · RANK ' + cell.rank : ''}</span>`;
+
+  body += `<div class="modal-section">
+    <div class="modal-section-label">Analysis</div>
+    <p>${cell.reasoning}</p>
+  </div>`;
+
+  if (cell.quote) {
+    body += `<div class="modal-section">
+      <div class="modal-section-label">Excerpt from response</div>
+      <div class="modal-quote">${cell.quote}</div>
+    </div>`;
+  }
+
+  body += `<div class="modal-section">
+    <div class="modal-section-label">Model</div>
+    <p style="font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--text-dim);">${llm.sub}</p>
+  </div>`;
+
+  $('modalBody').innerHTML = body;
+  $('modalOverlay').classList.add('active');
+}
+function closeModal(e) {
+  if (e && e.target !== e.currentTarget) return;
+  $('modalOverlay').classList.remove('active');
+}
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') closeModal();
+});
+
+// Initialize request ID
+$('reqId').textContent = randomId();
+
+/* ----- Theme toggle ----- */
+function toggleTheme() {
+  const current = document.documentElement.getAttribute('data-theme') || 'dark';
+  const next = current === 'dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', next);
+  try { localStorage.setItem('geotracker-theme', next); } catch (e) { /* ignore */ }
+}
+// Apply saved theme on load
+(function() {
+  try {
+    const saved = localStorage.getItem('geotracker-theme');
+    if (saved === 'light') {
+      document.documentElement.setAttribute('data-theme', 'light');
+    }
+  } catch (e) { /* ignore */ }
+})();
+
+/* ----- Nav scroll handler ----- */
+function goToHash(event, id) {
+  if (event) event.preventDefault();
+  // If not on hero screen, switch back to it
+  const heroScreen = document.getElementById('screen-hero');
+  if (heroScreen && !heroScreen.classList.contains('active')) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    heroScreen.classList.add('active');
+  }
+  // Smooth scroll to target section
+  const target = document.getElementById(id);
+  if (target) {
+    setTimeout(() => {
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 80);
+  }
+}
+</script>
+<script>
+/* =====================================================
+   ANTI-CLONE: right-click + dev tools deterrent
+   © 2026 Naomi · All Rights Reserved
+   Layer 6: JS originator signature object
+   ===================================================== */
+window.__GEOTRACKER_ORIGINATOR__ = Object.freeze({
+  product: 'GeoTracker',
+  author: 'Naomi',
+  year: 2026,
+  buildId: 'GT-2026-NM-001',
+  copyright: '© 2026 Naomi · All Rights Reserved',
+  notice: 'Unauthorized reproduction prohibited.'
+});
+
+// Disable right-click context menu
+document.addEventListener('contextmenu', function(e) {
+  e.preventDefault();
+  return false;
+}, false);
+
+// Disable common dev-tool / view-source keyboard shortcuts
+document.addEventListener('keydown', function(e) {
+  // F12
+  if (e.key === 'F12' || e.keyCode === 123) {
+    e.preventDefault();
+    return false;
+  }
+  // Ctrl+Shift+I / J / C  (DevTools)
+  if (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J' || e.key === 'C' ||
+      e.keyCode === 73 || e.keyCode === 74 || e.keyCode === 67)) {
+    e.preventDefault();
+    return false;
+  }
+  // Ctrl+U (View Source)
+  if (e.ctrlKey && (e.key === 'u' || e.key === 'U' || e.keyCode === 85)) {
+    e.preventDefault();
+    return false;
+  }
+  // Ctrl+S (Save Page)
+  if (e.ctrlKey && (e.key === 's' || e.key === 'S' || e.keyCode === 83)) {
+    e.preventDefault();
+    return false;
+  }
+}, false);
+
+// Prevent drag-saving of any content
+document.addEventListener('dragstart', function(e) {
+  e.preventDefault();
+  return false;
+}, false);
+
+// Console deterrent message
+try {
+  console.log('%c© 2026 Naomi · GeoTracker · All Rights Reserved',
+    'color:#4fe8ff; font-size:16px; font-weight:bold; font-family:JetBrains Mono,monospace;');
+  console.log('%cBuild GT-2026-NM-001 · Unauthorized reproduction prohibited.',
+    'color:#9c9381; font-size:11px; font-family:JetBrains Mono,monospace;');
+} catch(e) {}
+</script>
+</body>
+</html>
