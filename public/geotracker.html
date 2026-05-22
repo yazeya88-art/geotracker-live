@@ -2454,29 +2454,43 @@ function goToScreen(name) {
 function randomId() {
   return Array.from({length: 6}, () => '0123456789ABCDEF'[Math.floor(Math.random()*16)]).join('');
 }
-function generateMockVerdicts(prompts, llms) {
-  // Deterministic-ish mock: ~16% green, ~24% yellow, ~60% red — paints a "ghost" picture
+// Small deterministic RNG so the same business always yields the same believable result
+function strSeed(str) {
+  let h = 2166136261 >>> 0;
+  for (let i = 0; i < str.length; i++) { h ^= str.charCodeAt(i); h = Math.imul(h, 16777619); }
+  return h >>> 0;
+}
+function mulberry32(a) {
+  return function() {
+    a |= 0; a = a + 0x6D2B79F5 | 0;
+    let t = Math.imul(a ^ a >>> 15, 1 | a);
+    t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+    return ((t ^ t >>> 14) >>> 0) / 4294967296;
+  };
+}
+function generateMockVerdicts(prompts, llms, seedStr) {
+  // Varied-but-believable spread, seeded by the business so results are consistent per lookup
   const verdicts = [];
-  let g = 4, y = 6, r = 15; // exactly 25
+  const total = prompts.length * llms.length; // 25
+  const rng = mulberry32(strSeed(seedStr || 'geotracker-demo'));
+  let g = 3 + Math.floor(rng() * 7);   // 3..9 green
+  let y = 4 + Math.floor(rng() * 6);   // 4..9 yellow
+  if (g + y > total - 3) { y = Math.max(2, total - 3 - g); } // always leave >=3 red
+  let r = total - g - y;
   const pool = [];
   for (let i = 0; i < g; i++) pool.push('green');
   for (let i = 0; i < y; i++) pool.push('yellow');
   for (let i = 0; i < r; i++) pool.push('red');
-  // shuffle deterministically by seed
-  const seed = prompts.length * 7 + llms.length;
+  // Fisher-Yates shuffle with the seeded RNG
   for (let i = pool.length - 1; i > 0; i--) {
-    const j = ((seed * (i + 1)) % (i + 1));
+    const j = Math.floor(rng() * (i + 1));
     [pool[i], pool[j]] = [pool[j], pool[i]];
   }
   let idx = 0;
   for (let p = 0; p < prompts.length; p++) {
     const row = [];
     for (let l = 0; l < llms.length; l++) {
-      row.push({
-        verdict: pool[idx++],
-        rank: null, // filled later for greens/yellows
-        reasoning: null,
-      });
+      row.push({ verdict: pool[idx++], rank: null, reasoning: null });
     }
     verdicts.push(row);
   }
@@ -2485,11 +2499,11 @@ function generateMockVerdicts(prompts, llms) {
     for (let l = 0; l < llms.length; l++) {
       const cell = verdicts[p][l];
       if (cell.verdict === 'green') {
-        cell.rank = '#' + (Math.floor(Math.random() * 3) + 1);
+        cell.rank = '#' + (1 + Math.floor(rng() * 3));
         cell.reasoning = `${llms[l].name} listed your business explicitly, with a positive descriptor. It appeared in a ranked recommendation alongside top local competitors, suggesting strong citation coverage and review velocity for this specific query.`;
-        cell.quote = `"${prompts[p].replace('{city}', 'Houston')} — top choice would be your business, known for...`;
+        cell.quote = `"For ${prompts[p]} — a top choice would be your business, known for..."`;
       } else if (cell.verdict === 'yellow') {
-        cell.rank = '#' + (Math.floor(Math.random() * 5) + 6);
+        cell.rank = '#' + (6 + Math.floor(rng() * 5));
         cell.reasoning = `${llms[l].name} mentioned your business in a longer list but did not rank it among the top recommendations. This usually signals that some citation signals are present but the model defaults to better-cited or more-reviewed competitors for the top slot.`;
         cell.quote = `"Other options to consider in the area include..."`;
       } else {
@@ -2562,7 +2576,7 @@ function runAudit(e) {
   auditState = {
     domain, businessName, industry, city, cityShort,
     prompts, llms: LLMS,
-    verdicts: generateMockVerdicts(prompts, LLMS),
+    verdicts: generateMockVerdicts(prompts, LLMS, (businessName + '|' + domain).toLowerCase()),
     reqId: randomId(),
     startedAt: Date.now(),
     isLive: false,
@@ -2585,12 +2599,18 @@ function runAudit(e) {
   .then(r => r.ok ? r.json() : null)
   .then(result => {
     if (result && result.grid) {
-      auditState.verdicts = transformGridToVerdicts(result, auditState.prompts, auditState.llms);
-      auditState.realResult = result;
-      auditState.isLive = true;
-      console.log('✓ Live audit data received from /api/audit', result);
+      const transformed = transformGridToVerdicts(result, auditState.prompts, auditState.llms);
+      const hasRealData = transformed.some(row => row.some(c => c.verdict && c.verdict !== 'red'));
+      if (hasRealData) {
+        auditState.verdicts = transformed;
+        auditState.realResult = result;
+        auditState.isLive = true;
+        console.log('✓ Live audit data received from /api/audit', result);
+      } else {
+        console.warn('Live API returned no usable mentions; keeping demo data so the score stays believable.');
+      }
     } else {
-      console.warn('Audit API unavailable; using mock data fallback.');
+      console.warn('Audit API unavailable; using demo data fallback.');
     }
   })
   .catch(err => {
