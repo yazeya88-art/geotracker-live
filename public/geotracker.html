@@ -260,7 +260,7 @@
   @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
 
   /* HERO */
-  .hero { padding: 80px 0 60px; }
+  .hero { padding: 80px 32px 60px; }
   .hero-eyebrow {
     font-family: 'JetBrains Mono', monospace;
     font-size: 11px;
@@ -729,9 +729,9 @@
   .field input:focus, .field select:focus {
     outline: none;
     border-color: var(--accent);
-    background: var(--surface-2);
+    background-color: var(--surface-2);
   }
-  .field select { appearance: none; cursor: pointer; background-image: url("data:image/svg+xml,%3Csvg width='12' height='8' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%239c9381' stroke-width='1.5' fill='none'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 16px center; padding-right: 40px; }
+  .field select { appearance: none; -webkit-appearance: none; -moz-appearance: none; cursor: pointer; background-color: var(--bg-elevated); background-image: url("data:image/svg+xml,%3Csvg width='12' height='8' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%239c9381' stroke-width='1.5' fill='none'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 16px center; background-size: 12px 8px; padding-right: 40px; }
   [data-theme="light"] .field select { background-image: url("data:image/svg+xml,%3Csvg width='12' height='8' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%235e5749' stroke-width='1.5' fill='none'/%3E%3C/svg%3E"); }
   .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
 
@@ -865,7 +865,7 @@
   }
 
   /* RESULTS */
-  .results-screen { padding: 48px 0 80px; }
+  .results-screen { padding: 48px 32px 80px; }
   .results-header {
     display: flex; justify-content: space-between; align-items: flex-end;
     margin-bottom: 48px;
@@ -1417,7 +1417,7 @@
     .logo-globe { width: 24px; height: 24px; }
 
     /* Hero */
-    .hero { padding: 44px 0 32px; }
+    .hero { padding: 44px 18px 32px; }
     .hero-eyebrow { font-size: 10px; margin-bottom: 16px; }
     .hero h1 { font-size: clamp(34px, 9vw, 52px); line-height: 1.02; margin-bottom: 18px; }
     .hero-sub { font-size: 15px; margin-bottom: 32px; line-height: 1.55; }
@@ -1445,7 +1445,7 @@
     .progress-count { font-size: 11px; min-width: 56px; }
 
     /* Results header */
-    .results-screen { padding: 32px 0 56px; }
+    .results-screen { padding: 32px 18px 56px; }
     .results-header { margin-bottom: 28px; gap: 16px; }
     .results-title-block h2 { font-size: 30px; }
     .results-meta { font-size: 11px; line-height: 1.7; }
@@ -1615,13 +1615,20 @@
     /* Sample matrix collapses to scrollable on mobile */
     .sample-matrix { overflow-x: auto; }
     .sample-row { min-width: 480px; }
-    .nav-cta { padding: 8px 12px; font-size: 10px; }
-    .nav-signin { display: none; }
+    .nav-cta, .nav-signin { padding: 8px 13px; font-size: 9.5px; white-space: nowrap; }
+    .nav-signin { display: inline-flex; align-items: center; }
+    .header-meta { gap: 7px; }
+    .logo { font-size: 18px; }
   }
 
   /* ===== RESPONSIVE: NARROW MOBILE (≤400px) ===== */
   @media (max-width: 400px) {
     .wrap { padding: 0 14px; }
+    .logo { font-size: 16px; gap: 6px; }
+    .logo-globe { width: 26px; height: 26px; }
+    .nav-cta, .nav-signin { padding: 7px 10px; font-size: 9px; }
+    .header-meta { gap: 6px; }
+    .theme-toggle { width: 30px; height: 30px; }
     .audit-form { padding: 20px; }
     .hero h1 { font-size: 30px; }
     .hero-sub { font-size: 14px; }
@@ -1784,7 +1791,7 @@ body.light-mode .wm-corner { color: rgba(0, 0, 0, 0.05); }
   [data-theme="light"] { --box-shadow: 0 12px 32px rgba(21,35,63,0.12), 0 3px 10px rgba(21,35,63,0.07); --box-shadow-hover: 0 20px 48px rgba(21,35,63,0.18); }
 
   /* every action button becomes a pill */
-  .btn, .price-cta, .price-cta-outline, .restart-btn, .btn-outline {
+  .btn, .price-cta, .price-cta-outline, .restart-btn, .btn-outline, .sample-cta, .gt-btn, .nav-cta, .nav-signin {
     border-radius: 999px !important;
   }
 
@@ -1894,7 +1901,7 @@ body.light-mode .wm-corner { color: rgba(0, 0, 0, 0.05); }
   .gt-badge.err { background: var(--red-bg); color: var(--red); }
   .gt-out-body { font-size: 13.5px; color: var(--text-dim); line-height: 1.55; white-space: pre-wrap; }
 
-  /* Modal forms (Pulse signup / Talk to Upserve / Sign in) */
+  /* Modal forms (Pulse signup / Talk to Upserv / Sign in) */
   .gt-form { display: flex; flex-direction: column; gap: 12px; margin-top: 6px; }
   .gt-form-row { display: flex; gap: 12px; }
   .gt-form-row .gt-modal-input { flex: 1; min-width: 0; }
@@ -2115,7 +2122,7 @@ body.light-mode .wm-corner { color: rgba(0, 0, 0, 0.05); }
         <div class="price-card featured">
           <div class="price-badge">Most Popular</div>
           <div class="price-tier">Premium</div>
-          <div class="price-amount"><span class="price-num">$30</span><span class="price-period">/month</span></div>
+          <div class="price-amount"><span class="price-num">$49</span><span class="price-period">/month</span></div>
           <p class="price-tagline">For owners who want the full diagnostic, not just the symptom.</p>
           <ul class="price-features">
             <li>Everything in Free, plus:</li>
@@ -2140,7 +2147,7 @@ body.light-mode .wm-corner { color: rgba(0, 0, 0, 0.05); }
             <li>Custom content roadmap</li>
             <li>Direct line to your dedicated specialist</li>
           </ul>
-          <button class="price-cta-outline" onclick="openTalkToUpserve()">Talk to Sales</button>
+          <button class="price-cta-outline" onclick="openTalkToUpserv()">Talk to Sales</button>
         </div>
       </div>
     </div>
@@ -2280,17 +2287,17 @@ body.light-mode .wm-corner { color: rgba(0, 0, 0, 0.05); }
   </section>
 
   <!-- ADD-ON 3: COMPARISON TABLE -->
-  <section class="gt-sec" id="why-upserve">
+  <section class="gt-sec" id="why-upserv">
     <div class="gt-wrap">
-      <div class="gt-eyebrow">Why Upserve</div>
-      <h2 class="gt-h2">Website builders publish pages.<br>Upserve builds AI-readable <em>business signals.</em></h2>
-      <p class="gt-lead">Wix, Squarespace, GoDaddy, and WordPress help you launch a site. Upserve continuously builds the service, FAQ, local, and booking signals AI needs before it can recommend your business.</p>
+      <div class="gt-eyebrow">Why Upserv</div>
+      <h2 class="gt-h2">Website builders publish pages.<br>Upserv builds AI-readable <em>business signals.</em></h2>
+      <p class="gt-lead">Wix, Squarespace, GoDaddy, and WordPress help you launch a site. Upserv continuously builds the service, FAQ, local, and booking signals AI needs before it can recommend your business.</p>
       <div class="gt-table-scroll">
         <table class="gt-table">
           <thead>
             <tr>
               <th>Capability</th>
-              <th class="gt-col-us">Upserve<span class="gt-rec-badge">Recommended</span></th>
+              <th class="gt-col-us">Upserv<span class="gt-rec-badge">Recommended</span></th>
               <th>Wix</th><th>Squarespace</th><th>GoDaddy</th><th>WordPress DIY</th>
             </tr>
           </thead>
@@ -2505,8 +2512,8 @@ body.light-mode .wm-corner { color: rgba(0, 0, 0, 0.05); }
           Subscribe Free
           <span class="btn-arrow">→</span>
         </button>
-        <button class="btn btn-outline" onclick="openTalkToUpserve()">
-          Talk to Upserve
+        <button class="btn btn-outline" onclick="openTalkToUpserv()">
+          Talk to Upserv
         </button>
       </div>
     </div>
@@ -2781,7 +2788,7 @@ function transformGridToVerdicts(result, demoPrompts, demoLLMs) {
    This key is SAFE to leave in the page — Web3Forms only ever delivers to the
    inbox you verified, so it cannot be abused to email anyone else.
    Until you paste a key, this safely does nothing (no errors, demo still works). */
-const WEB3FORMS_ACCESS_KEY = 'bd7da96b-a069-4bea-ad4f-277f61abd0fc';
+const WEB3FORMS_ACCESS_KEY = 'PASTE-YOUR-WEB3FORMS-ACCESS-KEY-HERE';
 let _leadEmailSent = false;
 function sendLeadEmail(state, score) {
   if (_leadEmailSent) return;
@@ -2816,7 +2823,7 @@ function sendLeadEmail(state, score) {
     .catch(err => console.warn('[GeoTracker] Email send error:', err.message));
 }
 
-/* ===== Shared Web3Forms sender + modal forms (Pulse / Upserve / Sign in) ===== */
+/* ===== Shared Web3Forms sender + modal forms (Pulse / Upserv / Sign in) ===== */
 function gtWeb3Send(payload) {
   if (!WEB3FORMS_ACCESS_KEY || WEB3FORMS_ACCESS_KEY.indexOf('PASTE-') === 0) {
     return Promise.resolve({ demo: true }); // no key yet — treat as demo capture
@@ -2870,11 +2877,11 @@ function submitPulse() {
     .catch(function () { msg.className = 'gt-form-msg err'; msg.textContent = 'Network error. Please try again.'; });
 }
 
-/* Talk to Upserve — lead capture */
-function openTalkToUpserve() {
+/* Talk to Upserv — lead capture */
+function openTalkToUpserv() {
   var ctx = gtCtx();
-  gtOpenModal('Talk to <em style="font-style:italic;color:var(--accent)">Upserve</em>',
-    '<p class="gt-modal-intro">Tell us about your business and we\'ll show you exactly how Upserve closes the gaps in your audit. We reply within one business day.</p>' +
+  gtOpenModal('Talk to <em style="font-style:italic;color:var(--accent)">Upserv</em>',
+    '<p class="gt-modal-intro">Tell us about your business and we\'ll show you exactly how Upserv closes the gaps in your audit. We reply within one business day.</p>' +
     '<div class="gt-form">' +
       '<div class="gt-form-row">' +
         '<input class="gt-modal-input" id="upName" type="text" placeholder="Your name">' +
@@ -2882,11 +2889,11 @@ function openTalkToUpserve() {
       '</div>' +
       '<input class="gt-modal-input" id="upBiz" type="text" value="' + (ctx.businessName || '') + '" placeholder="Business name or website">' +
       '<textarea class="gt-modal-input" id="upMsg" placeholder="What would you like help with? (optional)"></textarea>' +
-      '<button class="gt-btn" onclick="submitUpserve()">Request a callback →</button>' +
+      '<button class="gt-btn" onclick="submitUpserv()">Request a callback →</button>' +
       '<div class="gt-form-msg" id="upMsgOut"></div>' +
     '</div>');
 }
-function submitUpserve() {
+function submitUpserv() {
   var name = ($('upName').value || '').trim();
   var email = ($('upEmail').value || '').trim();
   var biz = ($('upBiz').value || '').trim();
@@ -2897,8 +2904,8 @@ function submitUpserve() {
   out.className = 'gt-form-msg'; out.textContent = 'Sending…';
   var ctx = gtCtx();
   gtWeb3Send({
-    subject: 'Upserve lead: ' + name + (biz ? ' — ' + biz : ''),
-    from_name: 'GeoTracker · Upserve',
+    subject: 'Upserv lead: ' + name + (biz ? ' — ' + biz : ''),
+    from_name: 'GeoTracker · Upserv',
     'Name': name, 'Email': email, 'Business / Website': biz || '(not provided)',
     'Message': note || '(none)',
     'Audited business': ctx.businessName || '(not run)', 'Domain': ctx.domain || '',
